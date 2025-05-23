@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from fastapi import Query
-from ....db.session import SessionLocal  # Adjust import if needed
-from ....db.models.material_master import Material_Master
+from app.db.session import SessionLocal  # Adjust import if needed
+from app.db.models.material_master import Material_Master
 
 from app.schemas.material_master import MaterialCreate, MaterialUpdate, MaterialOut
 

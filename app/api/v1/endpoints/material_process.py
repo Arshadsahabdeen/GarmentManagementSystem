@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.db.models.material_master import Material_Master
-from ....db.session import SessionLocal
-from ....db.models.material_process import Material_Process
+from app.db.session import SessionLocal
+from app.db.models.material_process import Material_Process
 from app.schemas.material_process import MaterialProcessCreate, MaterialProcessUpdate, MaterialProcessOut
 
 router = APIRouter()
@@ -15,14 +15,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# @router.post("/", response_model=MaterialProcessOut, status_code=status.HTTP_201_CREATED)
-# def create_material_process(mp: MaterialProcessCreate, db: Session = Depends(get_db)):
-#     new_mp = Material_Process(**mp.dict())
-#     db.add(new_mp)
-#     db.commit()
-#     db.refresh(new_mp)
-#     return new_mp
 
 @router.post("/", response_model=MaterialProcessOut, status_code=status.HTTP_201_CREATED)
 def create_material_process(mp: MaterialProcessCreate, db: Session = Depends(get_db)):
