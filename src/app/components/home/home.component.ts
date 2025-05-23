@@ -24,4 +24,13 @@ export class HomeComponent {
   goToMaterialProcesses() {
     this.router.navigate(['/material-process']);
   }
+  goToStitchingDetails() {
+    this.router.navigate(['/stitching-details']);
+  }
+  goToTailors() {
+    this.router.navigate(['/tailors']);
+  }
+  goToDispatch() {
+    this.router.navigate(['/dispatch']);
+  }
 }

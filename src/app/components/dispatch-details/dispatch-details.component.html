@@ -1,0 +1,136 @@
+<div class="container">
+  <h2>Dispatch Details</h2>
+  <button class="btn-home" (click)="goHome()">Home</button>
+
+  <!-- Form for Add / Edit -->
+  <form (ngSubmit)="editMode ? updateDispatch() : addDispatch()" class="material-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="stitchingId">Stitching Details ID *</label>
+        <input
+          id="stitchingId"
+          type="number"
+          [(ngModel)]="newDispatch.Stitching_Details_Id"
+          name="Stitching_Details_Id"
+          required
+          placeholder="Enter Stitching ID"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="dispatchDate">Dispatch Date *</label>
+        <input
+          id="dispatchDate"
+          type="date"
+          [(ngModel)]="newDispatch.Dispatch_Date"
+          name="Dispatch_Date"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="qty">Quantity Dispatched *</label>
+        <input
+          id="qty"
+          type="number"
+          [(ngModel)]="newDispatch.Quantity_Dispatched"
+          name="Quantity_Dispatched"
+          required
+          min="1"
+          placeholder="Qty"
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="price">Price (₹) *</label>
+        <input
+          id="price"
+          type="number"
+          step="0.01"
+          min="0"
+          [(ngModel)]="newDispatch.Price"
+          name="Price"
+          required
+          placeholder="Enter price"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="receiver">Receiver Name *</label>
+        <input
+          id="receiver"
+          type="text"
+          [(ngModel)]="newDispatch.Receiver_Name"
+          name="Receiver_Name"
+          required
+          placeholder="Enter receiver name"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="status">Dispatch Status *</label>
+        <select id="status" [(ngModel)]="newDispatch.Dispatch_Status" name="Dispatch_Status" required>
+          <option [value]="true">Dispatched</option>
+          <option [value]="false">Pending</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="remarks">Remarks</label>
+      <textarea
+        id="remarks"
+        [(ngModel)]="newDispatch.Remarks"
+        name="Remarks"
+        rows="3"
+        placeholder="Any remarks"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        {{ editMode ? 'Update Dispatch' : 'Add Dispatch' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancelEdit()" *ngIf="editMode">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <!-- Dispatch Table -->
+  <table class="materials-table" *ngIf="dispatches.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Stitching ID</th>
+        <th>Date</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Receiver</th>
+        <th>Status</th>
+        <th>Remarks</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of dispatches">
+        <td>{{ d.Dispatch_Id }}</td>
+        <td>{{ d.Stitching_Details_Id }}</td>
+        <td>{{ d.Dispatch_Date | date:'yyyy-MM-dd' }}</td>
+        <td>{{ d.Quantity_Dispatched }}</td>
+        <td>{{ d.Price | currency:'INR' }}</td>
+        <td>{{ d.Receiver_Name }}</td>
+        <td>{{ d.Dispatch_Status ? 'Dispatched' : 'Pending' }}</td>
+        <td>{{ d.Remarks }}</td>
+        <td>
+          <button class="btn btn-edit" (click)="editDispatch(d)">Edit</button>
+          <button class="btn btn-delete" (click)="deleteDispatch(d.Dispatch_Id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="dispatches.length === 0">No dispatch records found.</p>
+</div>
