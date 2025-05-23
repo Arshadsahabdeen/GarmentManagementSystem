@@ -1,0 +1,21 @@
+<div class="home-container">
+  <header class="header">
+    <h1>Garment Management</h1>
+    <div class="header-actions">
+      <button class="action-button">Profile</button>
+      <button class="action-button logout" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <h2 class="dashboard-title">Dashboard</h2>
+
+    <div class="cards-container">
+      <div class="card" (click)="goToMaterials()">
+        <h3>Materials</h3>
+        <p>Manage your materials inventory here</p>
+      </div>
+      <!-- Add more cards here if needed -->
+    </div>
+  </main>
+</div>
