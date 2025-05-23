@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-
+from fastapi import Query
 from ....db.session import SessionLocal  # Adjust import if needed
 from ....db.models.material_master import Material_Master
 
@@ -17,13 +17,24 @@ def get_db():
     finally:
         db.close()
 
+@router.get("/check-exists")
+def check_material_exists(
+    name: str = Query(...),
+    color: str = Query(...),
+    db: Session = Depends(get_db)
+):
+    exists = db.query(Material_Master).filter(
+        Material_Master.Material_Desc == name,
+        Material_Master.Color == color
+    ).first()
+    return {"exists": bool(exists)}
 
 @router.post("/", response_model=MaterialOut, status_code=status.HTTP_201_CREATED)
 def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
     # Check if Material_Desc is unique
-    db_material = db.query(Material_Master).filter(Material_Master.Material_Desc == material.Material_Desc).first()
-    if db_material:
-        raise HTTPException(status_code=400, detail="Material description already exists")
+    # db_material = db.query(Material_Master).filter(Material_Master.Material_Desc == material.Material_Desc).first()
+    # if db_material:
+    #     raise HTTPException(status_code=400, detail="Material description already exists")
 
     new_material = Material_Master(**material.dict())
     db.add(new_material)
