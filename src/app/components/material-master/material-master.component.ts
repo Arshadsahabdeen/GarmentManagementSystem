@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialService } from '../../services/material.service';
 import { Material } from '../../models/material.model';
-
+import { HomeComponent } from '../home/home.component';
+import { Router } from '@angular/router';
+  
 @Component({
   selector: 'app-material-master',
   standalone: true,
@@ -28,7 +30,7 @@ export class MaterialMasterComponent implements OnInit {
   editMode = false;
   selectedMaterialId: number | null = null;
 
-  constructor(private materialService: MaterialService) {}
+  constructor(private materialService: MaterialService,private router:Router) {}
 
   ngOnInit() {
     this.loadMaterials();
@@ -106,5 +108,8 @@ export class MaterialMasterComponent implements OnInit {
       Purchase_Date: '',
       Comments: ''
     };
+  }
+  goHome() {
+    this.router.navigate(['/home']);
   }
 }

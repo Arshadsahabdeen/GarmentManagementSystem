@@ -21,4 +21,7 @@ export class HomeComponent {
   goToMaterials() {
     this.router.navigate(['/materials']);
   }
+  goToMaterialProcesses() {
+    this.router.navigate(['/material-process']);
+  }
 }

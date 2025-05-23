@@ -1,0 +1,84 @@
+<div class="container">
+  <h2>Material Process</h2>
+  <button class="btn-home" (click)="goHome()">Home</button>
+
+  <!-- Form for Add / Edit -->
+  <form (ngSubmit)="editMode ? updateMaterialProcess() : addMaterialProcess()" class="material-form">
+    <div class="form-group">
+      <label for="materialId">Material ID *</label>
+      <input
+        id="materialId"
+        type="number"
+        [(ngModel)]="newMaterialProcess.Material_Id"
+        name="Material_Id"
+        required
+        placeholder="Enter material ID"
+        min="1"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="quantityProcessed">Quantity Processed</label>
+      <input
+        id="quantityProcessed"
+        type="number"
+        [(ngModel)]="newMaterialProcess.Quantity_Processed"
+        name="Quantity_Processed"
+        min="0"
+        step="0.01"
+        placeholder="Quantity Processed"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="processedDate">Processed Date *</label>
+      <input
+        id="processedDate"
+        type="date"
+        [(ngModel)]="newMaterialProcess.Processed_Date"
+        name="Processed_Date"
+        required
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        {{ editMode ? 'Update Material Process' : 'Add Material Process' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancelEdit()" *ngIf="editMode">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <!-- Material Processes Table -->
+  <table class="materials-table" *ngIf="materialProcesses.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Material ID</th>
+        <th>Quantity Processed</th>
+        <th>Processed Date</th>
+        <th>Entry Date</th>
+        <th>Modified Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mp of materialProcesses">
+        <td>{{ mp.Material_Process_Id }}</td>
+        <td>{{ mp.Material_Id }}</td>
+        <td>{{ mp.Quantity_Processed }}</td>
+        <td>{{ mp.Processed_Date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ mp.Entry_Date | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>{{ mp.Modified_Date | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>
+          <button class="btn btn-edit" (click)="editMaterialProcess(mp)">Edit</button>
+          <button class="btn btn-delete" (click)="deleteMaterialProcess(mp.Material_Process_Id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="materialProcesses.length === 0">No material processes found.</p>
+</div>

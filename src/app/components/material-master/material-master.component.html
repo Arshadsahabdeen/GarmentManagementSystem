@@ -1,5 +1,6 @@
 <div class="container">
   <h2>Material Master</h2>
+<button class="btn-home" (click)="goHome()">Home</button>
 
   <!-- Form for Add / Edit -->
   <form (ngSubmit)="editMode ? updateMaterial() : addMaterial()" class="material-form">
@@ -119,7 +120,7 @@
         <td>{{ mat.Material_Desc }}</td>
         <td>{{ mat.Quantity }}</td>
         <td>{{ mat.Color }}</td>
-        <td>{{ mat.Price | currency }}</td>
+        <td>{{ mat.Price | currency:'INR':'symbol':'1.2-2' }}</td>
         <td>{{ mat.Pattern }}</td>
         <td>{{ mat.Purchase_Date | date: 'yyyy-MM-dd' }}</td>
         <td>{{ mat.Comments }}</td>
