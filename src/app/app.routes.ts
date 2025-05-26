@@ -11,10 +11,19 @@ import { DispatchComponent } from './components/dispatch-details/dispatch-detail
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'materials', component: MaterialMasterComponent },
-  { path: 'material-process', component: MaterialProcessComponent},
-  { path: 'stitching-details', component: StitchingDetailsComponent},
-  { path: 'tailors', component: TailorComponent},
-  { path: 'dispatch', component: DispatchComponent}
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'materials', pathMatch: 'full' },
+      { path: 'materials', component: MaterialMasterComponent },
+      { path: 'material-process', component: MaterialProcessComponent },
+      { path: 'stitching-details', component: StitchingDetailsComponent },
+      { path: 'tailors', component: TailorComponent },
+      { path: 'dispatch', component: DispatchComponent },
+    ]
+  },
+  { path: '**', redirectTo: 'login' }
 ];
+

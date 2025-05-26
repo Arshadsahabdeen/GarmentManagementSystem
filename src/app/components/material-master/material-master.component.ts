@@ -112,7 +112,7 @@ export class MaterialMasterComponent implements OnInit {
   goHome() {
     this.router.navigate(['/home']);
   }
-  printMaterialTable(): void {
+  printTable(): void {
   const printContents = document.getElementById('materialPrintArea')?.innerHTML;
   if (!printContents) return;
 

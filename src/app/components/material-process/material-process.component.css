@@ -206,11 +206,11 @@ textarea {
 }
 
 /* Home button style */
-.btn-home {
+/* .btn-home {
   background-color: #f44336;
   color: white;
   border: none;
-  padding: 9px 16px;
+  padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
@@ -220,14 +220,14 @@ textarea {
 
 .btn-home:hover {
   background-color: #d32f2f;
-}
+} */
 
 /* Print button style (same height and spacing) */
 .btn-print {
   background-color: #6f7276;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 14px;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
@@ -235,10 +235,11 @@ textarea {
   transition: background-color 0.3s ease;
    position: fixed;
   top: 20px;
-  right: 110px; /* Offset from right to appear left of home */
+  right: 20px; /* Offset from right to appear left of home */
   z-index: 1000;
 }
 
 .btn-print:hover {
   background-color: #515355;
 }
+

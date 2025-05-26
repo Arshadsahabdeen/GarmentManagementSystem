@@ -52,8 +52,7 @@ label {
 input[type='text'],
 input[type='number'],
 input[type='date'],
-textarea,
-select {
+textarea {
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -61,9 +60,10 @@ select {
   transition: border-color 0.3s ease;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='date']:focus,
+textarea:focus {
   border-color: #007bff;
   outline: none;
 }
@@ -108,16 +108,6 @@ textarea {
   background-color: #545b62;
 }
 
-.print-button {
-  margin: 0;
-  padding: 6px 12px;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 /* Table styles */
 .materials-table {
   width: 100%;
@@ -126,7 +116,6 @@ textarea {
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  margin-bottom: 20px;
 }
 
 .materials-table th,
@@ -134,7 +123,6 @@ textarea {
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
-  vertical-align: top;
 }
 
 .materials-table th {
@@ -178,14 +166,6 @@ textarea {
 .btn-delete:hover {
   background-color: #b02a37;
 }
-
-/* Snackbar style for error */
-.snackbar-error {
-  background-color: #f44336;
-  color: white;
-}
-
-/* Print styles */
 @media print {
   body * {
     visibility: hidden;
@@ -226,11 +206,11 @@ textarea {
 }
 
 /* Home button style */
-.btn-home {
+/* .btn-home {
   background-color: #f44336;
   color: white;
   border: none;
-  padding: 9px 16px;
+  padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
@@ -240,14 +220,14 @@ textarea {
 
 .btn-home:hover {
   background-color: #d32f2f;
-}
+} */
 
 /* Print button style (same height and spacing) */
 .btn-print {
   background-color: #6f7276;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 14px;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
@@ -255,10 +235,11 @@ textarea {
   transition: background-color 0.3s ease;
    position: fixed;
   top: 20px;
-  right: 110px; /* Offset from right to appear left of home */
+  right: 20px; /* Offset from right to appear left of home */
   z-index: 1000;
 }
 
 .btn-print:hover {
   background-color: #515355;
 }
+
