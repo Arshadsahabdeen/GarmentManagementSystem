@@ -7,6 +7,7 @@ import { MaterialProcessComponent } from './components/material-process/material
 import { StitchingDetailsComponent } from './components/stitching-details/stitching-details.component';
 import { TailorComponent } from './components/tailor-master/tailor-master.component';
 import { DispatchComponent } from './components/dispatch-details/dispatch-details.component';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },

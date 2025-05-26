@@ -52,7 +52,8 @@ label {
 input[type='text'],
 input[type='number'],
 input[type='date'],
-textarea {
+textarea,
+select {
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -60,10 +61,9 @@ textarea {
   transition: border-color 0.3s ease;
 }
 
-input[type='text']:focus,
-input[type='number']:focus,
-input[type='date']:focus,
-textarea:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: #007bff;
   outline: none;
 }
@@ -108,6 +108,16 @@ textarea {
   background-color: #545b62;
 }
 
+.print-button {
+  margin: 0;
+  padding: 6px 12px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 /* Table styles */
 .materials-table {
   width: 100%;
@@ -116,6 +126,7 @@ textarea {
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
 }
 
 .materials-table th,
@@ -123,6 +134,7 @@ textarea {
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
+  vertical-align: top;
 }
 
 .materials-table th {
@@ -166,21 +178,87 @@ textarea {
 .btn-delete:hover {
   background-color: #b02a37;
 }
+
+/* Snackbar style for error */
+.snackbar-error {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Print styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #dispatchTable, #dispatchTable * {
+    visibility: visible;
+  }
+
+  #dispatchTable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .btn-home,
+  .btn-print,
+  form,
+  h2,
+  .materials-table,
+  .form-actions,
+  .form-group,
+  .form-row {
+    display: none !important;
+  }
+}
+
+
+/* Wrapper for both buttons fixed at top-right */
+.top-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+/* Home button style */
 .btn-home {
-  background-color: #f44336; /* Red background like logout */
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 9px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+}
+
+.btn-home:hover {
+  background-color: #d32f2f;
+}
+
+/* Print button style (same height and spacing) */
+.btn-print {
+  background-color: #6f7276;
   color: white;
   border: none;
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
-  position: fixed; /* Fix to screen */
-  top: 20px;       /* Distance from top */
-  right: 20px;     /* Distance from right */
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   transition: background-color 0.3s ease;
+   position: fixed;
+  top: 20px;
+  right: 110px; /* Offset from right to appear left of home */
+  z-index: 1000;
 }
 
-.btn-home:hover {
-  background-color: #d32f2f; /* Darker red on hover */
+.btn-print:hover {
+  background-color: #515355;
 }

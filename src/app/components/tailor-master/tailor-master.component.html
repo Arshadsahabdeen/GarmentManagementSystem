@@ -1,6 +1,9 @@
 <div class="container">
   <h2>Tailor Management</h2>
+  <div class="top-buttons">
+  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
   <button class="btn-home" (click)="goHome()">Home</button>
+  </div>
 
   <form (ngSubmit)="editMode ? updateTailor() : addTailor()" class="material-form">
     <div class="form-row">
@@ -13,8 +16,14 @@
         <input type="number" [(ngModel)]="newTailor.Age" name="Age" required />
       </div>
       <div class="form-group">
-        <label>Gender</label>
-        <input type="text" [(ngModel)]="newTailor.Gender" name="Gender" required />
+        <label for="gender">Gender:</label>
+<select id="gender" [(ngModel)]="newTailor.Gender" name="gender" required>
+  <option value="" disabled selected>Select Gender</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+  <option value="Rather Not Say">Rather Not Say</option>
+</select>
+
       </div>
     </div>
 
@@ -81,4 +90,38 @@
   </table>
 
   <p *ngIf="tailorList.length === 0">No tailors found.</p>
+  <div id="tailorPrintArea" style="display: none;">
+  <h3>Tailor Master Details</h3>
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Tailor ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Contact</th>
+        <th>Experience</th>
+        <th>Address</th>
+        <th>Date of Joining</th>
+        <th>Entry Date</th>
+        <th>Modified Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tailor of tailorList">
+        <td>{{ tailor.Tailor_Id }}</td>
+        <td>{{ tailor.Tailor_Name }}</td>
+        <td>{{ tailor.Age }}</td>
+        <td>{{ tailor.Gender }}</td>
+        <td>{{ tailor.Contact }}</td>
+        <td>{{ tailor.Experience }}</td>
+        <td>{{ tailor.Address }}</td>
+        <td>{{ tailor.Date_of_Joining }}</td>
+        <td>{{ tailor.Entry_Date }}</td>
+        <td>{{ tailor.Modified_Date }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 </div>

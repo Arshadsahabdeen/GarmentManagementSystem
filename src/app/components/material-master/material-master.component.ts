@@ -112,4 +112,48 @@ export class MaterialMasterComponent implements OnInit {
   goHome() {
     this.router.navigate(['/home']);
   }
+  printMaterialTable(): void {
+  const printContents = document.getElementById('materialPrintArea')?.innerHTML;
+  if (!printContents) return;
+
+  const printWindow = window.open('', '', 'width=1000,height=800');
+  if (printWindow) {
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Material Details</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+            }
+            h3 {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid black;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+          </style>
+        </head>
+        <body onload="window.print();">
+          ${printContents}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+  }
+}
+
 }

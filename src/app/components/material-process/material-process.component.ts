@@ -102,4 +102,33 @@ export class MaterialProcessComponent implements OnInit {
   goHome() {
     this.router.navigate(['/home']);
   }
+  
+  printTable(): void {
+  const printContents = document.getElementById('materialProcessPrintArea')?.innerHTML;
+  if (!printContents) return;
+  const printWindow = window.open('', '', 'width=1000,height=800');
+  if (printWindow) {
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Material Process</title>
+          <style>
+            body { font-family: Arial; margin: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid black; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            h3 { text-align: center; }
+          </style>
+        </head>
+        <body onload="window.print();">
+          ${printContents}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+  }
+}
+
 }

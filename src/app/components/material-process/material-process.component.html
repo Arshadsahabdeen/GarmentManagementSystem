@@ -1,7 +1,9 @@
 <div class="container">
   <h2>Material Process</h2>
+  <div class="top-buttons">
+  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
   <button class="btn-home" (click)="goHome()">Home</button>
-
+  </div>
   <!-- Form for Add / Edit -->
   <form (ngSubmit)="editMode ? updateMaterialProcess() : addMaterialProcess()" class="material-form">
     <div class="form-group">
@@ -81,4 +83,30 @@
   </table>
 
   <p *ngIf="materialProcesses.length === 0">No material processes found.</p>
+  <div id="materialProcessPrintArea" style="display: none;">
+  <h3>Material Process Details</h3>
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Process ID</th>
+        <th>Material ID</th>
+        <th>Quantity_Processed</th>
+        <th>Processed_Date</th>
+        <th>Entry Date</th>
+        <th>Modified Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let process of materialProcesses">
+        <td>{{ process.Material_Process_Id }}</td>
+        <td>{{ process.Material_Id }}</td>
+        <td>{{ process.Quantity_Processed }}</td>
+        <td>{{ process.Processed_Date }}</td>
+        <td>{{ process.Entry_Date }}</td>
+        <td>{{ process.Modified_Date }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 </div>

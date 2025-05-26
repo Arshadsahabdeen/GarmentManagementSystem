@@ -1,4 +1,6 @@
 export interface StitchingDetails {
+Entry_Date: any;
+Modified_Date: any;
   Stitching_Details_Id?: number;
   Material_Process_Id: number;
   Size: number;

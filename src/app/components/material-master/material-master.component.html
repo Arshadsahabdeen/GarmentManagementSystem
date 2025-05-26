@@ -1,6 +1,10 @@
 <div class="container">
   <h2>Material Master</h2>
-<button class="btn-home" (click)="goHome()">Home</button>
+<div class="top-buttons">
+  <button (click)="printMaterialTable()" class="btn btn-print">🖨️ Print </button>
+
+  <button class="btn-home" (click)="goHome()">Home</button>
+</div>
 
   <!-- Form for Add / Edit -->
   <form (ngSubmit)="editMode ? updateMaterial() : addMaterial()" class="material-form">
@@ -133,4 +137,33 @@
   </table>
 
   <p *ngIf="materials.length === 0">No materials found.</p>
+  <div id="materialPrintArea" style="display: none;">
+  <h3>Material Master Details</h3>
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Material ID</th>
+        <th>Material Description</th>
+        <th>Quantity</th>
+        <th>Color</th>
+        <th>Price</th>
+        <th>Entry Date</th>
+        <th>Modified Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let material of materials">
+        <td>{{ material.Material_Id }}</td>
+        <td>{{ material.Material_Desc }}</td>
+        <td>{{ material.Quantity }}</td>
+        <td>{{ material.Color }}</td>
+        <td>{{ material.Price }}</td>
+        <td>{{ material.Entry_Date }}</td>
+        <td>{{ material.Modified_Date }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
 </div>

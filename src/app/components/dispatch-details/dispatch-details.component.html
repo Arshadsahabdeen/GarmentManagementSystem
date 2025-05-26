@@ -1,8 +1,13 @@
 <div class="container">
   <h2>Dispatch Details</h2>
-  <button class="btn-home" (click)="goHome()">Home</button>
 
-  <!-- Form for Add / Edit -->
+  <div class="top-buttons">
+  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
+  <button class="btn-home" (click)="goHome()">Home</button>
+  </div>
+
+
+  <!-- Add/Edit Form -->
   <form (ngSubmit)="editMode ? updateDispatch() : addDispatch()" class="material-form">
     <div class="form-row">
       <div class="form-group">
@@ -99,7 +104,7 @@
     </div>
   </form>
 
-  <!-- Dispatch Table -->
+  <!-- Visible Table -->
   <table class="materials-table" *ngIf="dispatches.length > 0">
     <thead>
       <tr>
@@ -118,9 +123,9 @@
       <tr *ngFor="let d of dispatches">
         <td>{{ d.Dispatch_Id }}</td>
         <td>{{ d.Stitching_Details_Id }}</td>
-        <td>{{ d.Dispatch_Date | date:'yyyy-MM-dd' }}</td>
+        <td>{{ d.Dispatch_Date | date: 'yyyy-MM-dd' }}</td>
         <td>{{ d.Quantity_Dispatched }}</td>
-        <td>{{ d.Price | currency:'INR' }}</td>
+        <td>{{ d.Price | currency: 'INR' }}</td>
         <td>{{ d.Receiver_Name }}</td>
         <td>{{ d.Dispatch_Status ? 'Dispatched' : 'Pending' }}</td>
         <td>{{ d.Remarks }}</td>
@@ -133,4 +138,40 @@
   </table>
 
   <p *ngIf="dispatches.length === 0">No dispatch records found.</p>
+
+  <!-- Hidden Printable Table -->
+  <div id="dispatchPrintArea" style="display: none;">
+  <h3>Dispatch Details</h3>
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Dispatch ID</th>
+        <th>Stitching Details ID</th>
+        <th>Dispatch Date</th>
+        <th>Quantity Dispatched</th>
+        <th>Price</th>
+        <th>Receiver Name</th>
+        <th>Status</th>
+        <th>Remarks</th>
+        <th>Entry Date</th>
+        <th>Modified Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dispatch of dispatches">
+        <td>{{ dispatch.Dispatch_Id }}</td>
+        <td>{{ dispatch.Stitching_Details_Id }}</td>
+        <td>{{ dispatch.Dispatch_Date }}</td>
+        <td>{{ dispatch.Quantity_Dispatched }}</td>
+        <td>{{ dispatch.Price }}</td>
+        <td>{{ dispatch.Receiver_Name }}</td>
+        <td>{{ dispatch.Dispatch_Status ? 'Yes' : 'No' }}</td>
+        <td>{{ dispatch.Remarks }}</td>
+        <td>{{ dispatch.Entry_Date }}</td>
+        <td>{{ dispatch.Modified_Date }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 </div>
