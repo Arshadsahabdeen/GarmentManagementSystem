@@ -2,9 +2,11 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from app.schemas.dispatch import DispatchCreate, DispatchOut, DispatchUpdate
 from app.db.models.dispatch import Dispatch
+from app.db.models.stitching_details import Stitching_Details
 from app.db.session import SessionLocal
+from decimal import Decimal
 
-router = APIRouter(prefix="/dispatch", tags=["Dispatch"])
+router = APIRouter()
 
 def get_db():
     db = SessionLocal()
@@ -15,11 +17,29 @@ def get_db():
 
 @router.post("/", response_model=DispatchOut, status_code=status.HTTP_201_CREATED)
 def create_dispatch(dispatch: DispatchCreate, db: Session = Depends(get_db)):
+    # Check if the Stitching Details ID exists
+    stitching = db.query(Stitching_Details).filter(Stitching_Details.Stitching_Details_Id == dispatch.Stitching_Details_Id).first()
+    
+    if not stitching:
+        raise HTTPException(status_code=404, detail="Stitching Details ID does not exist.")
+
+    # Check if there is enough quantity stitched
+    if dispatch.Quantity_Dispatched > stitching.Quantity_Stitched:
+        raise HTTPException(status_code=400, detail="Not enough stitched quantity available for dispatch.")
+
+    # Proceed with dispatch creation
     new_dispatch = Dispatch(**dispatch.model_dump())
+    
+    # Deduct the dispatched quantity
+    stitching.Quantity_Stitched -= Decimal(dispatch.Quantity_Dispatched)
+
     db.add(new_dispatch)
     db.commit()
     db.refresh(new_dispatch)
+
     return new_dispatch
+
+
 
 @router.get("/", response_model=list[DispatchOut])
 def get_all_dispatches(db: Session = Depends(get_db)):

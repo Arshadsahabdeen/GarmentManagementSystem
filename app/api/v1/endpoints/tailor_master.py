@@ -26,6 +26,11 @@ def create_tailor(tailor: TailorCreate, db: Session = Depends(get_db)):
 def get_tailors(db: Session = Depends(get_db)):
     return db.query(Tailor_Master).all()
 
+@router.get("/dropdown-options", response_model=List[dict])
+def get_tailor_dropdown_options(db: Session = Depends(get_db)):
+    tailors = db.query(Tailor_Master).all()
+    return [{"id": t.Tailor_Id, "name": t.Tailor_Name} for t in tailors]
+
 @router.get("/{tailor_id}", response_model=TailorOut)
 def get_tailor(tailor_id: int, db: Session = Depends(get_db)):
     tailor = db.query(Tailor_Master).filter(Tailor_Master.Tailor_Id == tailor_id).first()

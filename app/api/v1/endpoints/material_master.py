@@ -48,6 +48,10 @@ def read_materials(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     materials = db.query(Material_Master).offset(skip).limit(limit).all()
     return materials
 
+@router.get("/dropdown-options")
+def get_material_dropdown_options(db: Session = Depends(get_db)):
+    materials = db.query(Material_Master).all()
+    return [{"id": m.Material_Id, "description": m.Material_Desc} for m in materials]
 
 @router.get("/{material_id}", response_model=MaterialOut)
 def read_material(material_id: int, db: Session = Depends(get_db)):
@@ -55,7 +59,6 @@ def read_material(material_id: int, db: Session = Depends(get_db)):
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
     return material
-
 
 @router.put("/{material_id}", response_model=MaterialOut)
 def update_material(material_id: int, updated_material: MaterialUpdate, db: Session = Depends(get_db)):

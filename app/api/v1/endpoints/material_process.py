@@ -44,6 +44,11 @@ def read_material_processes(skip: int = 0, limit: int = 100, db: Session = Depen
     mps = db.query(Material_Process).offset(skip).limit(limit).all()
     return mps
 
+@router.get("/dropdown-options")
+def get_material_process_dropdown_options(db: Session = Depends(get_db)):
+    options = db.query(Material_Process.Material_Process_Id, Material_Process.Quantity_Processed).all()
+    return [{"Material_Process_Id": o[0], "Quantity_Processed": o[1]} for o in options]
+
 @router.get("/{mp_id}", response_model=MaterialProcessOut)
 def read_material_process(mp_id: int, db: Session = Depends(get_db)):
     mp = db.query(Material_Process).filter(Material_Process.Material_Process_Id == mp_id).first()

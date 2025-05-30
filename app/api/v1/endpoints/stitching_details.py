@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from decimal import Decimal
 from app.db.session import SessionLocal
 from app.db.models.stitching_details import Stitching_Details
+from app.db.models.material_process import Material_Process
 from app.schemas.stitching_details import StitchingDetailsCreate, StitchingDetailsOut, StitchingDetailsUpdate
 
 router = APIRouter()
@@ -15,8 +17,24 @@ def get_db():
 # Create a new stitching detail
 @router.post("/", response_model=StitchingDetailsOut, status_code=status.HTTP_201_CREATED)
 def create_stitching_detail(stitching: StitchingDetailsCreate, db: Session = Depends(get_db)):
+    material_process = db.query(Material_Process).filter(
+        Material_Process.Material_Process_Id == stitching.Material_Process_Id
+    ).first()
+
+    if not material_process:
+        raise HTTPException(status_code=404, detail="Material Process ID does not exist")
+
+    stitching_size = Decimal(str(stitching.Size))  # convert float to Decimal
+
+    if material_process.Quantity_Processed < stitching_size:
+        raise HTTPException(status_code=400, detail="Not enough Quantity Processed available")
+
+    material_process.Quantity_Processed -= stitching_size
+    db.add(material_process)
+
     new_detail = Stitching_Details(**stitching.dict())
     db.add(new_detail)
+
     db.commit()
     db.refresh(new_detail)
     return new_detail
@@ -25,6 +43,15 @@ def create_stitching_detail(stitching: StitchingDetailsCreate, db: Session = Dep
 @router.get("/", response_model=list[StitchingDetailsOut])
 def get_stitching_details(db: Session = Depends(get_db)):
     return db.query(Stitching_Details).all()
+
+@router.get("/dropdown-options")
+def get_stitching_dropdown_options(db: Session = Depends(get_db)):
+    details = db.query(Stitching_Details).all()
+    return [
+        {"id": detail.Stitching_Details_Id, "qty": detail.Quantity_Stitched}
+        for detail in details
+    ]
+
 
 # Get a specific stitching detail by ID
 @router.get("/{id}", response_model=StitchingDetailsOut)

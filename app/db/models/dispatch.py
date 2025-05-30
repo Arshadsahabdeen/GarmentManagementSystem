@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, Date, DECIMAL, Boolean, TI
 from app.database import Base
 
 class Dispatch(Base):
-    __tablename__ = "dispatch"
+    __tablename__ = "Dispatch_Details"
 
     Dispatch_Id = Column(Integer, primary_key=True, index=True)
     Stitching_Details_Id = Column(Integer, ForeignKey("stitching_details.Stitching_Details_Id"), nullable=False)
