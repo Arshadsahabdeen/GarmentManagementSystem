@@ -1,6 +1,7 @@
 .layout {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 50px); /* Account for fixed header height */
+  margin-top: 50px; /* Push layout below header */
 }
 
 .sidebar {
@@ -10,7 +11,21 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  top: 50px; /* Start below header */
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
 }
+
+.main-content {
+  margin-left: 220px; /* Account for sidebar width */
+  padding: 20px;
+  background-color: #f4f4f4;
+  width: calc(100% - 220px);
+  overflow-y: auto;
+}
+
 
 .logo {
   display: flex;
@@ -24,6 +39,16 @@
   width: auto;
   margin-bottom: 10px;
 }
+
+.logo-round {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #000000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
 
 nav ul {
   list-style: none;
@@ -39,8 +64,110 @@ nav li:hover {
   background-color: #0056b3;
 }
 
-.main-content {
-  flex-grow: 1;
-  padding: 20px;
-  background-color: #f4f4f4;
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
 }
+
+.header-content {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+.profile-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+}
+
+.dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  width: 200px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  background-color: #f0f8ff;
+}
+
+.dropdown-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.dropdown-name {
+  font-weight: 600;
+}
+
+.dropdown-role {
+  font-size: 12px;
+  color: #555;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown button:hover {
+  background-color: #f8f9fa;
+}
+
+.icon-user::before {
+  content: "👤";
+}
+
+.icon-logout::before {
+  content: "🚪";
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* To push the rest of the page content below the header */

@@ -1,7 +1,33 @@
 <div class="layout">
+  <div class="header-bar">
+  <div class="header-content">
+    <div class="spacer"></div>
+    <div class="profile-menu" (click)="toggleDropdown()" tabindex="0">
+  <img class="profile-icon" src="https://imgs.search.brave.com/ISZCRjFF95j8YvfGGebrYp-I54sCkzN8thrbIJnieac/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vVkY2a1FH/VkI2WFNuTElLSk1B/cWF2NWZaRnZuUGlj/VWl0Y3JlRUIwbk1h/NC9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTkw/TkM1bS9kR05rYmk1/dVpYUXZhbkJuL0x6/RXdMelUwTHpBNUx6/STMvTHpNMk1GOUdY/ekV3TlRRdy9PVEkz/T0RCZmJHbFBZbGxS/L2J6RXdVRzR5ZUU5/dk5FTnQvUjFsYVRX/VlhhWGN3VURkRC9W/REl1YW5Cbg.jpeg" alt="Profile" />
+  <div class="dropdown" *ngIf="dropdownOpen">
+    <div class="dropdown-header">
+      <img class="dropdown-avatar" src="https://imgs.search.brave.com/0m4B1lGp0wcklGum5TUZrBUaq00HwRBwLxqAYGb8jEU/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vOGZKR2dK/Z1h6Q3JVamJMMWpK/SGFET0hwMGdxMzRi/VVdybHpxcWZYSUVl/cy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl0/WldScC9ZUzVwYzNS/dlkydHdhRzkwL2J5/NWpiMjB2YVdRdk5U/ZzMvT0RBMU1UVTJM/M1psWTNSdi9jaTl3/Y205bWFXeGxMWEJw/L1kzUjFjbVV0ZG1W/amRHOXkvTFdsc2JI/VnpkSEpoZEdsdi9i/aTVxY0djX2N6MDJN/VEo0L05qRXlKbmM5/TUNaclBUSXcvSm1N/OVoydDJURVJEWjNO/SS9TQzA0U0dWUlpU/ZEtjMnBvL2JFOVpO/blpTUWtwclgzTkwv/Vnpsc2VXRk1aMjFN/Ynow.jpeg" alt="User Avatar" />
+      <div>
+        <div class="dropdown-name">Arshad</div>
+        <div class="dropdown-role">Admin</div>
+      </div>
+    </div>
+    <hr />
+    <button (click)="goToProfile()">
+      <i class="icon-user"></i> Profile
+    </button>
+    <button (click)="logout()">
+      <i class="icon-logout"></i> Logout
+    </button>
+  </div>
+</div>
+
+  </div>
+</div>
+
   <div class="sidebar">
     <div class="logo">
-      <img src="assets/image.jpg" alt="Logo" />
+      <img src="https://imgs.search.brave.com/gx7-LLPgGhNRnGSQKwa-pV1YMf72y6AUeX-IEfcbo5o/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTM3/MDU3ODA0Ny92ZWN0/b3IvbWFudWFsLXNl/d2luZy1tYWNoaW5l/LXZlY3Rvci1pY29u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz15TW9ac3BrM1Vx/MDc1OHh1X3NEb2xx/Z0RuanlBQXZDU2pW/TDQ1bzU0eUZrPQ" alt="Logo" class="logo-round" />
       <h2>Garment Management</h2>
     </div>
     <nav>
@@ -11,7 +37,6 @@
         <li (click)="goTo('stitching-details')">Stitching Details</li>
         <li (click)="goTo('tailors')">Tailors</li>
         <li (click)="goTo('dispatch')">Dispatch</li>
-        <li (click)="logout()">Logout</li>
       </ul>
     </nav>
   </div>
@@ -19,3 +44,4 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+

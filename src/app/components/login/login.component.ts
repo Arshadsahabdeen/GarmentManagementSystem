@@ -19,15 +19,18 @@ export class LoginComponent {
   constructor(private auth: AuthService, private router: Router) {} // ✅ Inject Router
 
   login() {
-    this.auth.login(this.username, this.password).subscribe({
-      next: (res) => {
-        this.auth.saveToken(res.access_token);
-        alert('Login successful!');
-        this.router.navigate(['/home']); // ✅ Redirect to homepage
-      },
-      error: (err) => {
-        this.error = err.error?.detail || 'Login failed';
-      },
-    });
-  }
+  console.log('Attempting login...');
+  this.auth.login(this.username, this.password).subscribe({
+    next: (res) => {
+      console.log('Login successful!', res);
+      this.auth.saveToken(res.access_token);
+      this.router.navigate(['/home']); // auto redirect
+    },
+    error: (err) => {
+      console.error('Login error:', err);
+      this.error = err.error?.detail || 'Login failed';
+    },
+  });
+}
+
 }

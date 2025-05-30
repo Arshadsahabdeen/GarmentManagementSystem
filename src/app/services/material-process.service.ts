@@ -27,6 +27,12 @@ export class MaterialProcessService {
     return this.http.get<MaterialProcess>(`${this.baseUrl}/${id}`);
   }
 
+  getMaterialProcessDropdownOptions() {
+  return this.http.get<{ id: number; description: string }[]>(
+    'http://localhost:8000/material-process/dropdown-options'
+  );
+  }
+
   create(mp: MaterialProcess): Observable<MaterialProcess> {
     return this.http.post<MaterialProcess>(this.baseUrl + '/', mp);
   }

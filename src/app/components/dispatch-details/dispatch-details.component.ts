@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { DispatchService } from '../../services/dispatch.service';
+import { StitchingDetailsService } from '../../services/stitching-details.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -15,19 +16,32 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class DispatchComponent implements OnInit {
   dispatches: any[] = [];
-  newDispatch: any = {};
+  newDispatch: any = {
+  Stitching_Details_Id: null,
+  Dispatch_Date: ' ',
+  Quantity_Dispatched: 0,
+  Price: 0,
+  Receiver_Name: ' ',
+  Dispatch_Status: ' ',
+  Remarks: ' '
+  };
   editMode = false;
+
+  stitchingDetailOptions: { id: number; qty: number }[] = [];
+
 
   @ViewChild('tableToPrint') tableToPrint!: ElementRef;
 
   constructor(
     private dispatchService: DispatchService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private stitchingDetailService: StitchingDetailsService
   ) {}
 
   ngOnInit(): void {
     this.loadDispatches();
+    this.loadStitchingDetailOptions();
   }
 
   loadDispatches(): void {
@@ -35,6 +49,18 @@ export class DispatchComponent implements OnInit {
       this.dispatches = data;
     });
   }
+
+  loadStitchingDetailOptions() {
+  this.stitchingDetailService.getDropdownOptions().subscribe({
+    next: (res) => {
+      this.stitchingDetailOptions = res;
+    },
+    error: (err) => {
+      console.error('Failed to load stitching details', err);
+    }
+  });
+}
+
 
   addDispatch(): void {
     this.dispatchService.createDispatch(this.newDispatch).subscribe({

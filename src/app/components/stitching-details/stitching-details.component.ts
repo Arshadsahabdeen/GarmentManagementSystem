@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { StitchingDetailsService } from '../../services/stitching-details.service';
 import { StitchingDetails } from '../../models/stitching-details.model';
 import { Router } from '@angular/router';
+import { MaterialProcessService } from '../../services/material-process.service';
+import { TailorService } from '../../services/tailor.service';
 
 @Component({
   selector: 'app-stitching-details',
@@ -15,23 +17,28 @@ import { Router } from '@angular/router';
 export class StitchingDetailsComponent implements OnInit {
   stitchingDetailsList: StitchingDetails[] = [];
 
-  newDetails: Partial<StitchingDetails> = {
-    Material_Process_Id: 0,
+  materialProcessOptions: { id: number; qty: number }[] = [];
+
+  newDetails: any = {
+    Material_Process_Id: null,
     Size: 0,
     Stitching_Date: '',
     Stitching_Status: false,
     Quantity_Stitched: 0,
-    Tailor_Id: 0,
+    Tailor_Id: null,
     Quality_Check_Status: false
   };
 
   editMode = false;
   selectedId: number | null = null;
 
-  constructor(private sdService: StitchingDetailsService, private router: Router) {}
+  constructor(private sdService: StitchingDetailsService, private tailorService: TailorService, private materialProcessService: MaterialProcessService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadStitchingDetails();
+    this.loadMaterialProcessOptions();
+    this.loadTailorOptions();
+
   }
 
   loadStitchingDetails() {
@@ -39,6 +46,29 @@ export class StitchingDetailsComponent implements OnInit {
       next: (res) => this.stitchingDetailsList = res,
       error: (err) => console.error('Error loading details', err)
     });
+  }
+  tailorOptions: { id: number; name: string }[] = [];
+
+loadTailorOptions() {
+  this.tailorService.getDropdownOptions().subscribe({
+    next: (res) => this.tailorOptions = res,
+    error: (err) => console.error('Failed to load tailor options', err)
+  });
+}
+
+  loadMaterialProcessOptions() {
+ this.materialProcessService.getMaterialProcessDropdownOptions().subscribe({
+  next: (res) => {
+    console.log('Material Process options:', res);  // ✅ Add this
+    this.materialProcessOptions = res.map((item: any) => ({
+      id: item.Material_Process_Id,
+      qty: item.Quantity_Processed
+    }));
+  },
+  error: (err) => {
+    console.error('Failed to load material process options', err);
+  }
+});
   }
 
   addDetail() {

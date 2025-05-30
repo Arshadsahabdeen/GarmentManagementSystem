@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
+  dropdownOpen = false;
   constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService) {}
   goTo(path: string) {
     this.router.navigate([path], { relativeTo: this.route });
@@ -20,6 +21,14 @@ export class HomeComponent {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+  toggleDropdown() {
+  this.dropdownOpen = !this.dropdownOpen;
+}
+  goToProfile() {
+  // navigate to profile
+  console.log('Navigating to profile...');
+  this.dropdownOpen = false;
+}
   // goToMaterials() {
   //   this.router.navigate(['/materials']);
   // }

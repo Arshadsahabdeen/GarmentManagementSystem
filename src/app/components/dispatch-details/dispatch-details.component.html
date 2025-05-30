@@ -11,16 +11,21 @@
   <form (ngSubmit)="editMode ? updateDispatch() : addDispatch()" class="material-form">
     <div class="form-row">
       <div class="form-group">
-        <label for="stitchingId">Stitching Details ID *</label>
-        <input
-          id="stitchingId"
-          type="number"
-          [(ngModel)]="newDispatch.Stitching_Details_Id"
-          name="Stitching_Details_Id"
-          required
-          placeholder="Enter Stitching ID"
-        />
-      </div>
+  <label for="stitchingDetailId">Stitching Detail ID *</label>
+  <select
+    id="stitchingDetailId"
+    [(ngModel)]="newDispatch.Stitching_Details_Id"
+    name="Stitching_Detail_Id"
+    required
+  >
+    <option [ngValue]="null" disabled selected>Select a stitching detail</option>
+    <option *ngFor="let sd of stitchingDetailOptions" [ngValue]="sd.id">
+      id: {{ sd.id }}, qty: {{ sd.qty }}
+    </option>
+  </select>
+</div>
+
+
 
       <div class="form-group">
         <label for="dispatchDate">Dispatch Date *</label>
@@ -151,7 +156,7 @@
         <th>Quantity Dispatched</th>
         <th>Price</th>
         <th>Receiver Name</th>
-        <th>Status</th>
+        <th>Dispatched Status</th>
         <th>Remarks</th>
         <th>Entry Date</th>
         <th>Modified Date</th>

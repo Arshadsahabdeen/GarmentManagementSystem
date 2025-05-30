@@ -8,11 +8,24 @@
   <form (ngSubmit)="editMode ? updateDetail() : addDetail()" class="material-form">
     <div class="form-row">
       <div class="form-group">
-        <label>Material Process ID</label>
-        <input type="number" [(ngModel)]="newDetails.Material_Process_Id" name="Material_Process_Id" required />
-      </div>
+  <label for="materialProcessId">Material Process ID *</label>
+  <select
+  id="materialProcessId"
+  [(ngModel)]="newDetails.Material_Process_Id"
+  name="Material_Process_Id"
+  required
+>
+  <option [ngValue]="null" disabled selected>Select a material process</option>
+  <option *ngFor="let mp of materialProcessOptions" [ngValue]="mp.id">
+    id: {{ mp.id }}, qty: {{ mp.qty }}
+  </option>
+</select>
+
+</div>
+
+
       <div class="form-group">
-  <label>Size</label>
+  <label>Size (in m)</label>
   <input type="number" [(ngModel)]="newDetails.Size" name="Size" (ngModelChange)="onSizeChange()" />
 </div>
       <div class="form-group">
@@ -36,9 +49,20 @@
   <input type="number" [(ngModel)]="newDetails.Quantity_Stitched" name="Quantity_Stitched" readonly />
 </div>
       <div class="form-group">
-        <label>Tailor ID</label>
-        <input type="number" [(ngModel)]="newDetails.Tailor_Id" name="Tailor_Id" />
-      </div>
+  <label for="tailorId">Tailor *</label>
+  <select
+    id="tailorId"
+    [(ngModel)]="newDetails.Tailor_Id"
+    name="Tailor_Id"
+    required
+  >
+    <option [ngValue]="null" disabled selected>Select a tailor</option>
+    <option *ngFor="let tailor of tailorOptions" [value]="tailor.id">
+      ID: {{ tailor.id }}, Name: {{ tailor.name }}
+    </option>
+  </select>
+</div>
+
       <div class="form-group">
         <label>Quality Check</label>
 <select [(ngModel)]="newDetails.Quality_Check_Status" name="Quality_Check_Status">
@@ -62,10 +86,10 @@
       <tr>
         <th>ID</th>
         <th>Material Process ID</th>
-        <th>Size</th>
+        <th>Size (in m)</th>
         <th>Stitching Date</th>
         <th>Status</th>
-        <th>Qty Stitched</th>
+        <th>Qty Stitched(Available)</th>
         <th>Tailor ID</th>
         <th>Quality Check</th>
         <th>Actions</th>

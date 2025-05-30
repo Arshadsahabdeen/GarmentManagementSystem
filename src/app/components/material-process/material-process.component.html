@@ -7,17 +7,20 @@
   <!-- Form for Add / Edit -->
   <form (ngSubmit)="editMode ? updateMaterialProcess() : addMaterialProcess()" class="material-form">
     <div class="form-group">
-      <label for="materialId">Material ID *</label>
-      <input
-        id="materialId"
-        type="number"
-        [(ngModel)]="newMaterialProcess.Material_Id"
-        name="Material_Id"
-        required
-        placeholder="Enter material ID"
-        min="1"
-      />
-    </div>
+  <label for="materialId">Material ID *</label>
+  <select
+    id="materialId"
+    [(ngModel)]="newMaterialProcess.Material_Id"
+    name="Material_Id"
+    required
+  >
+    <option value="" disabled selected>Select a material</option>
+    <option *ngFor="let mat of materialOptions" [value]="mat.id">
+      id: {{ mat.id }}, description - {{ mat.description }}
+    </option>
+  </select>
+</div>
+
 
     <div class="form-group">
       <label for="quantityProcessed">Quantity Processed</label>

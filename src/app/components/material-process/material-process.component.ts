@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialProcessService } from '../../services/material-process.service';
+import { MaterialService } from '../../services/material.service';
 import { MaterialProcess } from '../../models/material-process.model';
 import { Router } from '@angular/router';
 
@@ -15,8 +16,10 @@ import { Router } from '@angular/router';
 export class MaterialProcessComponent implements OnInit {
   materialProcesses: MaterialProcess[] = [];
 
-  newMaterialProcess: Partial<MaterialProcess> = {
-    Material_Id: 0,
+  materialOptions: { id: number; description: string }[] = [];
+
+  newMaterialProcess: any = {
+    Material_Id: '',
     Quantity_Processed: 0,
     Processed_Date: ''
   };
@@ -24,10 +27,11 @@ export class MaterialProcessComponent implements OnInit {
   editMode = false;
   selectedProcessId: number | null = null;
 
-  constructor(private materialProcessService: MaterialProcessService, private router: Router) {}
+  constructor(private materialProcessService: MaterialProcessService, private materialService: MaterialService,  private router: Router) {}
 
   ngOnInit() {
     this.loadMaterialProcesses();
+    this.loadMaterialOptions();
   }
 
   loadMaterialProcesses() {
@@ -41,6 +45,17 @@ export class MaterialProcessComponent implements OnInit {
     });
   }
 
+  loadMaterialOptions() {
+    this.materialService.getMaterialDropdownOptions().subscribe({
+      next: (res) => {
+        console.log('Loaded materials:', res); // Add this line
+        this.materialOptions = res;
+      },
+      error: (err) => {
+        console.error('Failed to load material options', err);
+      }
+    });
+  } 
   addMaterialProcess() {
     if (!this.newMaterialProcess.Material_Id || !this.newMaterialProcess.Processed_Date) {
       alert('Material Id and Processed Date are required');

@@ -13,6 +13,10 @@ export class TailorService {
     return this.http.get<Tailor[]>(`${this.baseUrl}/`);
   }
 
+  getDropdownOptions() {
+  return this.http.get<{ id: number; name: string }[]>(`${this.baseUrl}/dropdown-options`);
+  }
+
   addTailor(tailor: Tailor): Observable<Tailor> {
     return this.http.post<Tailor>(`${this.baseUrl}/`, tailor);
   }

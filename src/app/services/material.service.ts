@@ -31,6 +31,12 @@ export class MaterialService {
     return this.http.get<Material>(`${this.baseUrl}/${id}`);
   }
 
+  getMaterialDropdownOptions() {
+  return this.http.get<{ id: number; description: string }[]>(
+    'http://localhost:8000/api/v1/material_master/dropdown-options'
+  );
+}
+
   createMaterial(material: Material): Observable<Material> {
     return this.http.post<Material>(this.baseUrl, material);
   }

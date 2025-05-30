@@ -15,6 +15,11 @@ export class StitchingDetailsService {
     return this.http.get<StitchingDetails[]>(`${this.baseUrl}/`);
   }
 
+  getDropdownOptions() {
+  return this.http.get<{ id: number; qty: number }[]>(`${this.baseUrl}/dropdown-options`);
+}
+
+
   getById(id: number): Observable<StitchingDetails> {
     return this.http.get<StitchingDetails>(`${this.baseUrl}/${id}`);
   }
