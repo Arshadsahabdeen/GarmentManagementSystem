@@ -1,0 +1,74 @@
+.notification-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-bell {
+  font-size: 24px;
+  cursor: pointer;
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  z-index: 1000;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.notification-dropdown h4 {
+  margin: 0 0 10px;
+}
+
+.notification-dropdown ul {
+  padding: 0;
+  margin: 0;
+}
+
+.notification-dropdown li {
+  list-style: none;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.unread {
+  background-color: #f9f9f9;
+}
+
+button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  margin-top: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

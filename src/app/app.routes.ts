@@ -7,6 +7,7 @@ import { MaterialProcessComponent } from './components/material-process/material
 import { StitchingDetailsComponent } from './components/stitching-details/stitching-details.component';
 import { TailorComponent } from './components/tailor-master/tailor-master.component';
 import { DispatchComponent } from './components/dispatch-details/dispatch-details.component';
+// import { MaterialStockComponent } from './components/material-stock/material-stock.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,6 +23,8 @@ export const routes: Routes = [
       { path: 'stitching-details', component: StitchingDetailsComponent },
       { path: 'tailors', component: TailorComponent },
       { path: 'dispatch', component: DispatchComponent },
+      // { path: 'material-stock', component: MaterialStockComponent }
+
     ]
   },
   { path: '**', redirectTo: 'login' }

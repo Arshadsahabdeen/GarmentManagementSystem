@@ -109,9 +109,7 @@ export class MaterialMasterComponent implements OnInit {
       Comments: ''
     };
   }
-  goHome() {
-    this.router.navigate(['/home']);
-  }
+
   printTable(): void {
   const printContents = document.getElementById('materialPrintArea')?.innerHTML;
   if (!printContents) return;

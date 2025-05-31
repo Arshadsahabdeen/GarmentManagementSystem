@@ -1,0 +1,53 @@
+<!-- <div>
+  <h2>Material Stock Management</h2>
+
+  <label for="material-select">Select Material:</label>
+  <select id="material-select" [(ngModel)]="selectedMaterialId" (change)="onMaterialChange()">
+    <option [ngValue]="null">-- Select Material --</option>
+    <option *ngFor="let m of materials" [value]="m.id">{{ m.description }}</option>
+  </select>
+
+  <div *ngIf="stocks.length > 0">
+    <h3>Stock Details</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Color</th>
+          <th>Pattern</th>
+          <th>Price</th>
+          <th>Purchase Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of stocks">
+          <td>{{ s.Quantity }}</td>
+          <td>{{ s.Color }}</td>
+          <td>{{ s.Pattern }}</td>
+          <td>{{ s.Price }}</td>
+          <td>{{ s.Purchase_Date | date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Add New Stock</h3>
+  <form (ngSubmit)="addStock()">
+    <label>Quantity:</label>
+    <input type="number" [(ngModel)]="newStock.Quantity" name="quantity" required />
+
+    <label>Color:</label>
+    <input type="text" [(ngModel)]="newStock.Color" name="color" />
+
+    <label>Pattern:</label>
+    <input type="text" [(ngModel)]="newStock.Pattern" name="pattern" />
+
+    <label>Price:</label>
+    <input type="number" [(ngModel)]="newStock.Price" name="price" step="0.01" />
+
+    <label>Purchase Date:</label>
+    <input type="date" [(ngModel)]="newStock.Purchase_Date" name="purchaseDate" />
+
+    <button type="submit">Add Stock</button>
+  </form>
+</div> -->

@@ -1,0 +1,31 @@
+<div class="notification-wrapper">
+  <!-- Bell Icon with badge -->
+  <div class="notification-bell" (click)="toggleDropdown()">
+    🔔
+    <span class="badge" *ngIf="unreadCount > 0">
+      {{ unreadCount }}
+    </span>
+  </div>
+
+  <!-- Dropdown -->
+  <div class="notification-dropdown" *ngIf="showDropdown">
+    <h4>Notifications</h4>
+
+    <div *ngIf="notifications.length === 0">No notifications available</div>
+
+    <ul>
+      <li *ngFor="let notification of notifications">
+        <div [class.unread]="notification.read === 0">
+          <strong *ngIf="notification.title">{{ notification.title }}</strong>
+          <p>{{ notification.message }}</p>
+          <small>{{ notification.created_at | date: 'short' }}</small>
+          <button
+            *ngIf="notification.read === 0"
+            (click)="markAsRead(notification.id)">
+            Mark as Read
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
