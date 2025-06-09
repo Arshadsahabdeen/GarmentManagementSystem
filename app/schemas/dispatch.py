@@ -25,6 +25,7 @@ class DispatchUpdate(DispatchBase):
 
 class DispatchOut(DispatchBase):
     Dispatch_Id: int
+    Material_Desc: str   
     Entry_Date: Optional[datetime] 
     Modified_Date: Optional[datetime]
 

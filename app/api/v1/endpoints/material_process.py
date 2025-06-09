@@ -18,21 +18,20 @@ def get_db():
 
 @router.post("/", response_model=MaterialProcessOut, status_code=status.HTTP_201_CREATED)
 def create_material_process(mp: MaterialProcessCreate, db: Session = Depends(get_db)):
-    # First, fetch the material from Material_Master
+    # Check material existence
     material = db.query(Material_Master).filter(Material_Master.Material_Id == mp.Material_Id).first()
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
 
-    # Check if enough quantity is available
+    # Ensure enough quantity is available
     if material.Quantity is None or material.Quantity < mp.Quantity_Processed:
         raise HTTPException(status_code=400, detail="Insufficient material quantity")
 
     # Deduct the quantity
     material.Quantity -= mp.Quantity_Processed
 
-    # Create the Material_Process record
+    # Create new Material_Process entry
     new_mp = Material_Process(**mp.dict())
-
     db.add(new_mp)
     db.commit()
     db.refresh(new_mp)
@@ -41,13 +40,55 @@ def create_material_process(mp: MaterialProcessCreate, db: Session = Depends(get
 
 @router.get("/", response_model=List[MaterialProcessOut])
 def read_material_processes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    mps = db.query(Material_Process).offset(skip).limit(limit).all()
-    return mps
+    results = (
+        db.query(
+            Material_Process.Material_Process_Id,
+            Material_Process.Material_Id,
+            Material_Process.Quantity_Processed,
+            Material_Process.Processed_Date,
+            Material_Master.Material_Desc,
+            Material_Master.Color,
+            Material_Process.Entry_Date,
+            Material_Process.Modified_Date
+        )
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    return [
+        {
+            "Material_Process_Id": r[0],
+            "Material_Id": r[1],  
+            "Quantity_Processed": r[2],
+            "Processed_Date": r[3],
+            "Material_Desc": r[4],
+            "Color": r[5],
+            "Entry_Date": r[6],
+            "Modified_Date": r[7],
+        }
+        for r in results
+    ]
 
 @router.get("/dropdown-options")
 def get_material_process_dropdown_options(db: Session = Depends(get_db)):
-    options = db.query(Material_Process.Material_Process_Id, Material_Process.Quantity_Processed).all()
-    return [{"Material_Process_Id": o[0], "Quantity_Processed": o[1]} for o in options]
+    options = db.query(
+        Material_Process.Material_Process_Id,
+        Material_Process.Quantity_Processed,
+        Material_Master.Material_Desc,
+        Material_Master.Color
+    ).join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id).all()
+
+    return [
+        {
+            "Material_Process_Id": o[0],
+            "Quantity_Processed": float(o[1]),
+            "Material_Desc": o[2],
+            "Color": o[3]
+        }
+        for o in options
+    ]
+
 
 @router.get("/{mp_id}", response_model=MaterialProcessOut)
 def read_material_process(mp_id: int, db: Session = Depends(get_db)):

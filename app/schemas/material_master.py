@@ -5,23 +5,23 @@ from decimal import Decimal
 
 class MaterialBase(BaseModel):
     Material_Desc: str
-    Quantity: Optional[Decimal]
-    Color: Optional[str]
-    Price: Optional[Decimal]
-    Pattern: Optional[str]
-    Purchase_Date: Optional[date]
+    Quantity: Decimal
+    Color: str
+    Price: Decimal
+    Pattern: str
+    Purchase_Date: date
     Comments: Optional[str]
 
 class MaterialCreate(MaterialBase):
     pass
 
 class MaterialUpdate(BaseModel):
-    Material_Desc: Optional[str]
-    Quantity: Optional[Decimal]
-    Color: Optional[str]
-    Price: Optional[Decimal]
-    Pattern: Optional[str]
-    Purchase_Date: Optional[date]
+    Material_Desc: str
+    Quantity: Decimal
+    Color: str
+    Price: Decimal
+    Pattern: str
+    Purchase_Date: date
     Comments: Optional[str]
 
 class MaterialOut(MaterialBase):

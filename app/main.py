@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.endpoints import auth, material_master, material_process,  stitching_details, tailor_master, dispatch
+from app.api.v1.endpoints import auth, material_master, material_process,  stitching_details, tailor_master, dispatch, report
 
 app = FastAPI()
 
@@ -17,6 +17,7 @@ app.include_router(material_process.router, prefix="/material-process", tags=["M
 app.include_router(stitching_details.router, prefix="/stitching-details", tags=["Stitching Details"])
 app.include_router(tailor_master.router, prefix="/tailor-master", tags=["Tailor Master"])
 app.include_router(dispatch.router, prefix="/dispatch", tags=["Dispatch"])
+app.include_router(report.router, prefix="/report", tags=["Report"])
 
 @app.get("/")
 def root():

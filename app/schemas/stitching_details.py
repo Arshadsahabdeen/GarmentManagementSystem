@@ -3,7 +3,6 @@ from typing import Optional
 from datetime import date, datetime
 
 class StitchingDetailsBase(BaseModel):
-    Material_Process_Id: int
     Size: float
     Stitching_Date: date
     Stitching_Status: bool
@@ -12,7 +11,7 @@ class StitchingDetailsBase(BaseModel):
     Quality_Check_Status: bool
 
 class StitchingDetailsCreate(StitchingDetailsBase):
-    pass
+    Material_Process_Id: int
 
 class StitchingDetailsUpdate(BaseModel):
     Material_Process_Id: Optional[int]
@@ -23,10 +22,18 @@ class StitchingDetailsUpdate(BaseModel):
     Tailor_Id: Optional[int]
     Quality_Check_Status: Optional[bool]
 
-class StitchingDetailsOut(StitchingDetailsBase):
+class StitchingDetailsOut(BaseModel):
     Stitching_Details_Id: int
+    Material_Process_Id: int
+    Material_Desc: str
+    Size: float
+    Stitching_Date: date
+    Stitching_Status: bool
+    Quantity_Stitched: int
+    Tailor_Id: int
+    Quality_Check_Status: bool
     Entry_Date: datetime
     Modified_Date: datetime
 
     class Config:
-        from_attributes = True
+        orm_mode = True

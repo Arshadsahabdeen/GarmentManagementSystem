@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 from decimal import Decimal
 from app.db.session import SessionLocal
 from app.db.models.stitching_details import Stitching_Details
 from app.db.models.material_process import Material_Process
+from app.db.models.material_master import Material_Master
 from app.schemas.stitching_details import StitchingDetailsCreate, StitchingDetailsOut, StitchingDetailsUpdate
 
 router = APIRouter()
@@ -41,16 +43,70 @@ def create_stitching_detail(stitching: StitchingDetailsCreate, db: Session = Dep
 
 # Get all stitching details
 @router.get("/", response_model=list[StitchingDetailsOut])
-def get_stitching_details(db: Session = Depends(get_db)):
-    return db.query(Stitching_Details).all()
+def get_stitching_details(skip: int = 0, limit: int = 100,db: Session = Depends(get_db)):
+    results = (
+        db.query(
+            Stitching_Details.Stitching_Details_Id,
+            Stitching_Details.Material_Process_Id,
+            Material_Master.Material_Desc,
+            Stitching_Details.Size,
+            Stitching_Details.Stitching_Date,
+            Stitching_Details.Stitching_Status,
+            Stitching_Details.Quantity_Stitched,
+            Stitching_Details.Tailor_Id,
+            Stitching_Details.Quality_Check_Status,
+            Stitching_Details.Entry_Date,
+            Stitching_Details.Modified_Date
+        )
+        .join(Material_Process, Stitching_Details.Material_Process_Id == Material_Process.Material_Process_Id)
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    return [
+        {
+            "Stitching_Details_Id": r[0],
+            "Material_Process_Id": r[1],
+            "Material_Desc": r[2],
+            "Size": r[3],
+            "Stitching_Date": r[4],
+            "Stitching_Status": r[5],
+            "Quantity_Stitched": r[6],
+            "Tailor_Id": r[7],
+            "Quality_Check_Status": r[8],
+            "Entry_Date": r[9],
+            "Modified_Date": r[10]
+
+        }
+        for r in results
+    ]
 
 @router.get("/dropdown-options")
 def get_stitching_dropdown_options(db: Session = Depends(get_db)):
-    details = db.query(Stitching_Details).all()
+    results = (
+        db.query(
+            Stitching_Details.Stitching_Details_Id,
+            Stitching_Details.Quantity_Stitched,
+            Material_Master.Material_Desc,
+            Material_Master.Color
+        )
+        .join(Material_Process, Stitching_Details.Material_Process_Id == Material_Process.Material_Process_Id)
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .all()
+    )
+
     return [
-        {"id": detail.Stitching_Details_Id, "qty": detail.Quantity_Stitched}
-        for detail in details
+        {
+            "Stitching_Details_Id": r[0],
+            "Quantity_Stitched": r[1],
+            "Material_Desc": r[2],
+            "Color": r[3]
+        }
+        for r in results
     ]
+
 
 
 # Get a specific stitching detail by ID

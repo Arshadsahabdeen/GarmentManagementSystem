@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from app.schemas.dispatch import DispatchCreate, DispatchOut, DispatchUpdate
 from app.db.models.dispatch import Dispatch
 from app.db.models.stitching_details import Stitching_Details
+from app.db.models.material_process import Material_Process
+from app.db.models.material_master import Material_Master
 from app.db.session import SessionLocal
 from decimal import Decimal
-from app.db.models.notifications import Notification , NotificationOut
+# from app.db.models.notifications import Notification , NotificationOut
 from typing import List
 
 router = APIRouter()
@@ -36,9 +38,9 @@ def create_dispatch(dispatch: DispatchCreate, db: Session = Depends(get_db)):
     stitching.Quantity_Stitched -= Decimal(dispatch.Quantity_Dispatched)
 
     # Add notification: Shirts dispatched
-    dispatch_message = f"{dispatch.Quantity_Dispatched} shirts dispatched to {dispatch.Receiver_Name}."
-    notification = Notification(message=dispatch_message)
-    db.add(notification)
+    # dispatch_message = f"{dispatch.Quantity_Dispatched} shirts dispatched to {dispatch.Receiver_Name}."
+    # notification = Notification(message=dispatch_message)
+    # db.add(notification)
 
     # Optional: Add stock low alert
     # This assumes stitching.Material_Id exists and maps to some Material_Stock model
@@ -59,8 +61,46 @@ def create_dispatch(dispatch: DispatchCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[DispatchOut])
-def get_all_dispatches(db: Session = Depends(get_db)):
-    return db.query(Dispatch).all()
+def get_all_dispatches(skip: int = 0, limit: int = 100,db: Session = Depends(get_db)):
+    results = (
+        db.query(
+            Dispatch.Dispatch_Id,
+            Dispatch.Stitching_Details_Id,
+            Material_Master.Material_Desc,
+            Dispatch.Dispatch_Date,
+            Dispatch.Quantity_Dispatched,
+            Dispatch.Price,
+            Dispatch.Receiver_Name,
+            Dispatch.Dispatch_Status,
+            Dispatch.Remarks,
+            Dispatch.Entry_Date,
+            Dispatch.Modified_Date
+        )
+        .join(Stitching_Details, Dispatch.Stitching_Details_Id == Stitching_Details.Stitching_Details_Id)
+        .join(Material_Process, Stitching_Details.Material_Process_Id == Material_Process.Material_Process_Id)
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    return [
+        {
+            "Dispatch_Id": r[0],
+            "Stitching_Details_Id": r[1],  # optional: you can remove this from response if not needed
+            "Material_Desc": r[2],
+            "Dispatch_Date": r[3],
+            "Quantity_Dispatched": r[4],
+            "Price": r[5],
+            "Receiver_Name": r[6],
+            "Dispatch_Status": r[7],
+            "Remarks": r[8],
+            "Entry_Date": r[9],
+            "Modified_Date": r[10]
+        }
+        for r in results
+    ]
+
 
 @router.get("/{dispatch_id}", response_model=DispatchOut)
 def get_dispatch(dispatch_id: int, db: Session = Depends(get_db)):
@@ -90,6 +130,6 @@ def delete_dispatch(dispatch_id: int, db: Session = Depends(get_db)):
     db.delete(dispatch)
     db.commit()
 
-@router.get("/notifications", response_model=List[NotificationOut])
-def get_notifications(db: Session = Depends(get_db)):
-    return db.query(Notification).order_by(Notification.created_at.desc()).all()
+# @router.get("/notifications", response_model=List[NotificationOut])
+# def get_notifications(db: Session = Depends(get_db)):
+#     return db.query(Notification).order_by(Notification.created_at.desc()).all()
