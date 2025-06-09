@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialService } from '../../services/material.service';
 import { Material } from '../../models/material.model';
-import { HomeComponent } from '../home/home.component';
 import { Router } from '@angular/router';
-  
+
 @Component({
   selector: 'app-material-master',
   standalone: true,
@@ -16,7 +15,10 @@ import { Router } from '@angular/router';
 export class MaterialMasterComponent implements OnInit {
   materials: Material[] = [];
 
-  // Initialize with required fields only, other fields optional
+  materialNames: string[] = ['Cotton', 'Linen', 'Polyester', 'Denim', 'Lycra', 'Satin', 'Flannel', 'Lyocell'];
+  colorOptions: string[] = ['Red', 'Blue', 'Green', 'Black', 'White'];
+  patternOptions: string[] = ['Solid', 'Striped', 'Checked', 'Floral', 'Geometric'];
+
   newMaterial: Partial<Material> = {
     Material_Desc: '',
     Quantity: 0,
@@ -27,48 +29,67 @@ export class MaterialMasterComponent implements OnInit {
     Comments: ''
   };
 
+  errors: { [key: string]: string } = {};
   editMode = false;
   selectedMaterialId: number | null = null;
 
-  constructor(private materialService: MaterialService,private router:Router) {}
+  constructor(private materialService: MaterialService, private router: Router) {}
 
   ngOnInit() {
     this.loadMaterials();
+    // Optional: fetch material names from API
+    // this.materialService.getMaterialNames().subscribe({
+    //   next: (names) => this.materialNames = names,
+    //   error: (err) => console.error('Failed to load material names', err)
+    // });
   }
 
   loadMaterials() {
     this.materialService.getMaterials().subscribe({
-      next: (res) => {
-        this.materials = res;
-      },
-      error: (err) => {
-        console.error('Failed to load materials', err);
-      }
+      next: (res) => this.materials = res,
+      error: (err) => console.error('Failed to load materials', err)
     });
   }
 
   addMaterial() {
-    if (!this.newMaterial.Material_Desc) {
-      alert('Material description is required');
-      return;
-    }
+  this.errors = {};
 
-    this.materialService.createMaterial(this.newMaterial as Material).subscribe({
-      next: () => {
-        this.resetForm();
-        this.loadMaterials();
-      },
-      error: (err) => {
-        console.error('Failed to add material', err);
-      }
-    });
+  if (!this.newMaterial['Material_Desc']) {
+    this.errors['Material_Desc'] = 'Material description is required';
   }
+  if (!this.newMaterial['Quantity'] || this.newMaterial['Quantity']! <= 0) {
+    this.errors['Quantity'] = 'Quantity must be greater than 0';
+  }
+  if (!this.newMaterial['Color']) {
+    this.errors['Color'] = 'Color is required';
+  }
+  if (!this.newMaterial['Price'] || this.newMaterial['Price']! <= 0) {
+    this.errors['Price'] = 'Price must be greater than 0';
+  }
+  if (!this.newMaterial['Pattern']) {
+    this.errors['Pattern'] = 'Pattern is required';
+  }
+  if (!this.newMaterial['Purchase_Date']) {
+    this.errors['Purchase_Date'] = 'Purchase date is required';
+  }
+
+  if (Object.keys(this.errors).length > 0) return;
+
+  this.materialService.createMaterial(this.newMaterial as Material).subscribe({
+    next: () => {
+      this.resetForm();
+      this.loadMaterials();
+    },
+    error: (err) => console.error('Failed to add material', err)
+  });
+}
+
 
   editMaterial(material: Material) {
     this.editMode = true;
     this.selectedMaterialId = material.Material_Id || null;
-    // Copy values for editing
     this.newMaterial = { ...material };
+    this.errors = {};
   }
 
   updateMaterial() {
@@ -79,16 +100,7 @@ export class MaterialMasterComponent implements OnInit {
         this.cancelEdit();
         this.loadMaterials();
       },
-      error: (err) => {
-        console.error('Failed to update material', err);
-      }
-    });
-  }
-
-  deleteMaterial(id: number) {
-    this.materialService.deleteMaterial(id).subscribe({
-      next: () => this.loadMaterials(),
-      error: (err) => console.error('Failed to delete material', err)
+      error: (err) => console.error('Failed to update material', err)
     });
   }
 
@@ -108,50 +120,50 @@ export class MaterialMasterComponent implements OnInit {
       Purchase_Date: '',
       Comments: ''
     };
+    this.errors = {};
   }
 
   printTable(): void {
-  const printContents = document.getElementById('materialPrintArea')?.innerHTML;
-  if (!printContents) return;
+    const printContents = document.getElementById('materialPrintArea')?.innerHTML;
+    if (!printContents) return;
 
-  const printWindow = window.open('', '', 'width=1000,height=800');
-  if (printWindow) {
-    printWindow.document.open();
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Material Details</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 20px;
-            }
-            h3 {
-              text-align: center;
-              margin-bottom: 20px;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            th, td {
-              border: 1px solid black;
-              padding: 8px;
-              text-align: left;
-            }
-            th {
-              background-color: #f2f2f2;
-            }
-          </style>
-        </head>
-        <body onload="window.print();">
-          ${printContents}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
+    const printWindow = window.open('', '', 'width=1000,height=800');
+    if (printWindow) {
+      printWindow.document.open();
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Material Details</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+              }
+              h3 {
+                text-align: center;
+                margin-bottom: 20px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: left;
+              }
+              th {
+                background-color: #f2f2f2;
+              }
+            </style>
+          </head>
+          <body onload="window.print();">
+            ${printContents}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+    }
   }
-}
-
 }

@@ -5,7 +5,7 @@ export interface Tailor {
   Gender: string;
   Contact: string;
   Experience: number;
-  Address?: string;
+  Address: string;
   Date_of_Joining: string; // YYYY-MM-DD format
   Entry_Date?: string;
   Modified_Date?: string;

@@ -3,6 +3,7 @@ Entry_Date: any;
 Modified_Date: any;
   Stitching_Details_Id?: number;
   Material_Process_Id: number;
+  Material_Desc: string;
   Size: number;
   Stitching_Date: string; // Format: 'YYYY-MM-DD'
   Stitching_Status: boolean;

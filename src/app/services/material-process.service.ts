@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 export interface MaterialProcess {
   Material_Process_Id?: number;
   Material_Id: number;
+  Material_Desc: string;
+  Color: string;
   Quantity_Processed: number;
   Processed_Date: string;  // ISO date string (YYYY-MM-DD)
   Entry_Date?: string;     // optional timestamps
@@ -20,7 +22,7 @@ export class MaterialProcessService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<MaterialProcess[]> {
-    return this.http.get<MaterialProcess[]>(this.baseUrl + '/');
+    return this.http.get<MaterialProcess[]>(this.baseUrl );
   }
 
   getById(id: number): Observable<MaterialProcess> {

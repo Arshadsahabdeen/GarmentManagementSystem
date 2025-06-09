@@ -27,15 +27,20 @@ export class MaterialService {
     return this.http.get<Material[]>(this.baseUrl);
   }
 
+  getMaterialNames(): Observable<string[]> {
+  return this.http.get<string[]>('http://localhost:8000/material-names');
+}
+
   getMaterial(id: number): Observable<Material> {
     return this.http.get<Material>(`${this.baseUrl}/${id}`);
   }
 
-  getMaterialDropdownOptions() {
-  return this.http.get<{ id: number; description: string }[]>(
+ getMaterialDropdownOptions() {
+  return this.http.get<{ Material_Id: number; description: string; color: string; qty: number }[]>(
     'http://localhost:8000/api/v1/material_master/dropdown-options'
   );
 }
+
 
   createMaterial(material: Material): Observable<Material> {
     return this.http.post<Material>(this.baseUrl, material);

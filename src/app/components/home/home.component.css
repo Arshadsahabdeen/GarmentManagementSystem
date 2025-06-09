@@ -171,3 +171,27 @@ nav li:hover {
 
 
 /* To push the rest of the page content below the header */
+.report-button {
+  background-color: #007bff; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.report-button:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
+
+.report-button:active {
+  transform: scale(0.98);
+}

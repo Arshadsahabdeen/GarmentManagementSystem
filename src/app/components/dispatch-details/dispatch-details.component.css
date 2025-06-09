@@ -166,6 +166,7 @@ textarea {
 .btn-delete:hover {
   background-color: #b02a37;
 }
+
 @media print {
   body * {
     visibility: hidden;
@@ -193,6 +194,7 @@ textarea {
     display: none !important;
   }
 }
+
 .top-buttons {
   display: flex;
   justify-content: flex-end;
@@ -210,4 +212,26 @@ textarea {
 
 .btn-print:hover {
   background-color: #5a6268;
+}
+.error-message {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.error-input {
+  border: 1px solid red !important;
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
 }

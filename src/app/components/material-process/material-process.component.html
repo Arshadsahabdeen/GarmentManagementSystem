@@ -1,49 +1,60 @@
 <div class="container">
   <h2>Material Process</h2>
   <div class="top-buttons">
-  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
-  <!-- <button class="btn-home" (click)="goHome()">Home</button> -->
+    <button class="btn-print" (click)="printTable()">🖨️ Print</button>
   </div>
-  <!-- Form for Add / Edit -->
-  <form (ngSubmit)="editMode ? updateMaterialProcess() : addMaterialProcess()" class="material-form">
+
+  <form (ngSubmit)="editMode ? updateMaterialProcess() : addMaterialProcess()" class="material-form" novalidate>
     <div class="form-group">
-  <label for="materialId">Material ID *</label>
-  <select
-    id="materialId"
-    [(ngModel)]="newMaterialProcess.Material_Id"
-    name="Material_Id"
-    required
-  >
-    <option value="" disabled selected>Select a material</option>
-    <option *ngFor="let mat of materialOptions" [value]="mat.id">
-      id: {{ mat.id }}, description - {{ mat.description }}
-    </option>
-  </select>
-</div>
+      <label for="materialId">Material Type*</label>
+      <select
+  id="materialId"
+  [(ngModel)]="newMaterialProcess.Material_Id"
+  name="Material_Id"
+  required
+  class="form-control"
+  [ngClass]="{'error-input': validationErrors['Material_Id'], 'shake': shakeFields['Material_Id']}"
+>
+  <option value="" disabled selected hidden>Select material for process</option>
+  <option *ngFor="let mat of materialOptions" [value]="mat.Material_Id">
+    {{ mat.description }} - {{ mat.color }} - {{ mat.qty }}
+  </option>
+</select>
 
 
-    <div class="form-group">
-      <label for="quantityProcessed">Quantity Processed</label>
-      <input
-        id="quantityProcessed"
-        type="number"
-        [(ngModel)]="newMaterialProcess.Quantity_Processed"
-        name="Quantity_Processed"
-        min="0"
-        step="0.01"
-        placeholder="Quantity Processed"
-      />
+      <div *ngIf="validationErrors['Material_Id']" class="error-text">
+        {{ validationErrors['Material_Id'] }}
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="processedDate">Processed Date *</label>
+      <label for="quantityProcessed">Quantity For Processing *</label>
+      <input
+        type="number"
+        id="quantityProcessed"
+        [(ngModel)]="newMaterialProcess.Quantity_Processed"
+        name="Quantity_Processed"
+        placeholder="Enter quantity for processing"
+        [ngClass]="{'error-input': validationErrors['Quantity_Processed'], 'shake': shakeFields['Quantity_Processed']}"
+        class="form-control"
+      />
+      <div *ngIf="validationErrors['Quantity_Processed']" class="error-text">
+        {{ validationErrors['Quantity_Processed'] }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="processedDate">Processing Date *</label>
       <input
         id="processedDate"
         type="date"
         [(ngModel)]="newMaterialProcess.Processed_Date"
         name="Processed_Date"
-        required
+        [ngClass]="{'error-input': validationErrors['Processed_Date'], 'shake': shakeFields['Processed_Date']}"
       />
+      <div *ngIf="validationErrors['Processed_Date']" class="error-text">
+        {{ validationErrors['Processed_Date'] }}
+      </div>
     </div>
 
     <div class="form-actions">
@@ -56,60 +67,60 @@
     </div>
   </form>
 
-  <!-- Material Processes Table -->
   <table class="materials-table" *ngIf="materialProcesses.length > 0">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Material ID</th>
+        <th>Material</th>
+        <th>Color</th>
         <th>Quantity Processed</th>
         <th>Processed Date</th>
-        <th>Entry Date</th>
-        <th>Modified Date</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let mp of materialProcesses">
         <td>{{ mp.Material_Process_Id }}</td>
-        <td>{{ mp.Material_Id }}</td>
+        <td>{{ mp.Material_Desc }}</td>
+        <td>{{ mp.Color }}</td>   
         <td>{{ mp.Quantity_Processed }}</td>
         <td>{{ mp.Processed_Date | date: 'yyyy-MM-dd' }}</td>
-        <td>{{ mp.Entry_Date | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
-        <td>{{ mp.Modified_Date | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
         <td>
           <button class="btn btn-edit" (click)="editMaterialProcess(mp)">Edit</button>
-          <button class="btn btn-delete" (click)="deleteMaterialProcess(mp.Material_Process_Id!)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
 
   <p *ngIf="materialProcesses.length === 0">No material processes found.</p>
-  <div id="materialProcessPrintArea" style="display: none;">
-  <h3>Material Process Details</h3>
-  <table border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>Process ID</th>
-        <th>Material ID</th>
-        <th>Quantity_Processed</th>
-        <th>Processed_Date</th>
-        <th>Entry Date</th>
-        <th>Modified Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let process of materialProcesses">
-        <td>{{ process.Material_Process_Id }}</td>
-        <td>{{ process.Material_Id }}</td>
-        <td>{{ process.Quantity_Processed }}</td>
-        <td>{{ process.Processed_Date }}</td>
-        <td>{{ process.Entry_Date }}</td>
-        <td>{{ process.Modified_Date }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
+  <div id="materialProcessPrintArea" style="display: none;">
+    <h3>Material Process Details</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Process ID</th>
+          <th>Material ID</th>
+          <th>Material Description</th>
+          <th>Color</th>
+          <th>Quantity_Processed</th>
+          <th>Processed_Date</th>
+          <th>Entry Date</th>
+          <th>Modified Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let process of materialProcesses">
+          <td>{{ process.Material_Process_Id }}</td>
+          <td>{{ process.Material_Id }}</td>
+          <td>{{ process.Material_Desc }}</td>
+          <td>{{ process.Color }}</td>
+          <td>{{ process.Quantity_Processed }}</td>
+          <td>{{ process.Processed_Date }}</td>
+          <td>{{ process.Entry_Date }}</td>
+          <td>{{ process.Modified_Date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

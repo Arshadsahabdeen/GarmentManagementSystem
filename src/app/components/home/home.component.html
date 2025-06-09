@@ -2,7 +2,12 @@
   <div class="header-bar">
   <div class="header-content">
     <div class="spacer"></div>
-    <app-notification></app-notification>
+    <div class="report">
+  <button class="report-button" (click)="goTo('reports')">
+    📊 Reports
+  </button>
+</div>
+
     <div class="profile-menu" (click)="toggleDropdown()" tabindex="0">
   <img class="profile-icon" src="https://imgs.search.brave.com/ISZCRjFF95j8YvfGGebrYp-I54sCkzN8thrbIJnieac/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vVkY2a1FH/VkI2WFNuTElLSk1B/cWF2NWZaRnZuUGlj/VWl0Y3JlRUIwbk1h/NC9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTkw/TkM1bS9kR05rYmk1/dVpYUXZhbkJuL0x6/RXdMelUwTHpBNUx6/STMvTHpNMk1GOUdY/ekV3TlRRdy9PVEkz/T0RCZmJHbFBZbGxS/L2J6RXdVRzR5ZUU5/dk5FTnQvUjFsYVRX/VlhhWGN3VURkRC9W/REl1YW5Cbg.jpeg" alt="Profile" />
   <div class="dropdown" *ngIf="dropdownOpen">

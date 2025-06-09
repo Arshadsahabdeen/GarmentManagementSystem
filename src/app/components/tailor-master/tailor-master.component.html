@@ -1,52 +1,117 @@
 <div class="container">
   <h2>Tailor Details</h2>
   <div class="top-buttons">
-  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
-  <!-- <button class="btn-home" (click)="goHome()">Home</button> -->
+    <button class="btn-print" (click)="printTable()">🖨️ Print</button>
   </div>
 
   <form (ngSubmit)="editMode ? updateTailor() : addTailor()" class="material-form">
     <div class="form-row">
       <div class="form-group">
-        <label>Name</label>
-        <input type="text" [(ngModel)]="newTailor.Tailor_Name" name="Tailor_Name" required />
-      </div>
-      <div class="form-group">
-        <label>Age</label>
-        <input type="number" [(ngModel)]="newTailor.Age" name="Age" required />
-      </div>
-      <div class="form-group">
-        <label for="gender">Gender:</label>
-<select id="gender" [(ngModel)]="newTailor.Gender" name="gender" required>
-  <option value="" disabled selected>Select Gender</option>
-  <option value="Male">Male</option>
-  <option value="Female">Female</option>
-  <option value="Rather Not Say">Rather Not Say</option>
-</select>
+  <label>Name *</label>
+  <input
+    type="text"
+    [(ngModel)]="newTailor.Tailor_Name"
+    name="Tailor_Name"
+    required
+    [ngClass]="{ 'error-input': validationErrors['Tailor_Name'], 'shake': shakeFields['Tailor_Name'] }"
+  />
+  <div *ngIf="validationErrors['Tailor_Name']" class="error-text">
+    {{ validationErrors['Tailor_Name'] }}
+  </div>
+</div>
 
+
+      <div class="form-group">
+        <label>Age *</label>
+        <input
+  type="number"
+  [(ngModel)]="newTailor.Age"
+  name="Age"
+  min="18"
+  [ngClass]="{ 'error-input': validationErrors['Age'], 'shake': shakeFields['Age'] }"
+/>
+<div *ngIf="validationErrors['Age']" class="error-text">
+  {{ validationErrors['Age'] }}
+</div>
+
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Gender *</label>
+        <select
+          id="gender"
+          [(ngModel)]="newTailor.Gender"
+          name="Gender"
+          [ngClass]="{ 'error-input': validationErrors['Gender'], 'shake': shakeFields['Gender'] }"
+        >
+          <option value="" disabled selected>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Rather Not Say">Rather Not Say</option>
+        </select>
+        <div *ngIf="validationErrors['Gender']" class="error-text">
+          {{ validationErrors['Gender'] }}
+        </div>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label>Contact</label>
-        <input type="text" [(ngModel)]="newTailor.Contact" name="Contact" required />
+        <label>Contact *</label>
+        <input
+          type="text"
+          [(ngModel)]="newTailor.Contact"
+          name="Contact"
+          [ngClass]="{ 'error-input': validationErrors['Contact'], 'shake': shakeFields['Contact'] }"
+        />
+        <div *ngIf="validationErrors['Contact']" class="error-text">
+          {{ validationErrors['Contact'] }}
+        </div>
       </div>
+
       <div class="form-group">
-        <label>Experience (years)</label>
-        <input type="number" [(ngModel)]="newTailor.Experience" name="Experience" required />
-      </div>
+  <label>Experience (years)</label>
+  <input
+    type="number"
+    [(ngModel)]="newTailor.Experience"
+    name="Experience"
+    readonly
+  />
+</div>
+
+
       <div class="form-group">
-        <label>Address</label>
-        <textarea [(ngModel)]="newTailor.Address" name="Address"></textarea>
-      </div>
+  <label>Address *</label>
+  <textarea
+    [(ngModel)]="newTailor.Address"
+    name="Address"
+    required
+    [ngClass]="{ 'error-input': validationErrors['Address'], 'shake': shakeFields['Address'] }"
+  ></textarea>
+  <div *ngIf="validationErrors['Address']" class="error-text">
+    {{ validationErrors['Address'] }}
+  </div>
+</div>
+
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label>Date of Joining</label>
-        <input type="date" [(ngModel)]="newTailor.Date_of_Joining" name="Date_of_Joining" required />
-      </div>
+  <label>Date of Joining *</label>
+  <input
+    type="date"
+    [(ngModel)]="newTailor.Date_of_Joining"
+    name="Date_of_Joining"
+    (change)="onDateChange()"
+    required
+    [ngClass]="{ 'error-input': validationErrors['Date_of_Joining'], 'shake': shakeFields['Date_of_Joining'] }"
+  />
+  <div *ngIf="validationErrors['Date_of_Joining']" class="error-text">
+    {{ validationErrors['Date_of_Joining'] }}
+  </div>
+</div>
+
+
     </div>
 
     <div class="form-actions">
@@ -83,45 +148,44 @@
         <td>{{ t.Date_of_Joining }}</td>
         <td>
           <button class="btn btn-edit" (click)="editTailor(t)">Edit</button>
-          <button class="btn btn-delete" (click)="deleteTailor(t.Tailor_Id!)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
 
   <p *ngIf="tailorList.length === 0">No tailors found.</p>
-  <div id="tailorPrintArea" style="display: none;">
-  <h3>Tailor Master Details</h3>
-  <table border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>Tailor ID</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Gender</th>
-        <th>Contact</th>
-        <th>Experience</th>
-        <th>Address</th>
-        <th>Date of Joining</th>
-        <th>Entry Date</th>
-        <th>Modified Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let tailor of tailorList">
-        <td>{{ tailor.Tailor_Id }}</td>
-        <td>{{ tailor.Tailor_Name }}</td>
-        <td>{{ tailor.Age }}</td>
-        <td>{{ tailor.Gender }}</td>
-        <td>{{ tailor.Contact }}</td>
-        <td>{{ tailor.Experience }}</td>
-        <td>{{ tailor.Address }}</td>
-        <td>{{ tailor.Date_of_Joining }}</td>
-        <td>{{ tailor.Entry_Date }}</td>
-        <td>{{ tailor.Modified_Date }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
+  <div id="tailorPrintArea" style="display: none;">
+    <h3>Tailor Master Details</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Tailor ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Contact</th>
+          <th>Experience</th>
+          <th>Address</th>
+          <th>Date of Joining</th>
+          <th>Entry Date</th>
+          <th>Modified Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tailor of tailorList">
+          <td>{{ tailor.Tailor_Id }}</td>
+          <td>{{ tailor.Tailor_Name }}</td>
+          <td>{{ tailor.Age }}</td>
+          <td>{{ tailor.Gender }}</td>
+          <td>{{ tailor.Contact }}</td>
+          <td>{{ tailor.Experience }}</td>
+          <td>{{ tailor.Address }}</td>
+          <td>{{ tailor.Date_of_Joining }}</td>
+          <td>{{ tailor.Entry_Date }}</td>
+          <td>{{ tailor.Modified_Date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

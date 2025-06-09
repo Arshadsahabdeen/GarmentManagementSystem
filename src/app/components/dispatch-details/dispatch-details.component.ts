@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dispatch',
@@ -18,30 +19,34 @@ export class DispatchComponent implements OnInit {
   dispatches: any[] = [];
   newDispatch: any = {
   Stitching_Details_Id: null,
-  Dispatch_Date: ' ',
-  Quantity_Dispatched: 0,
-  Price: 0,
-  Receiver_Name: ' ',
-  Dispatch_Status: ' ',
-  Remarks: ' '
-  };
+  Dispatch_Date: '',               // should be a valid 'YYYY-MM-DD' date string
+  Quantity_Dispatched: null,       // int
+  Price: null,                     // float
+  Receiver_Name: '',              // string
+  Dispatch_Status: false,         // boolean
+  Remarks: ''                     // optional
+};
+
   editMode = false;
 
-  stitchingDetailOptions: { id: number; qty: number }[] = [];
+  selectedStitchingId: number | null = null;
+stitchingDropdownOptions: any[] = [];
 
-
+validationErrors: { [key: string]: string } = {};
+shakeFields: { [key: string]: boolean } = {};
   @ViewChild('tableToPrint') tableToPrint!: ElementRef;
 
   constructor(
     private dispatchService: DispatchService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private stitchingDetailService: StitchingDetailsService
+    private stitchingDetailService: StitchingDetailsService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.loadDispatches();
-    this.loadStitchingDetailOptions();
+    this.loadStitchingOptions();
   }
 
   loadDispatches(): void {
@@ -50,89 +55,125 @@ export class DispatchComponent implements OnInit {
     });
   }
 
-  loadStitchingDetailOptions() {
-  this.stitchingDetailService.getDropdownOptions().subscribe({
-    next: (res) => {
-      this.stitchingDetailOptions = res;
+  loadStitchingOptions() {
+  this.http.get<any[]>('http://localhost:8000/stitching-details/dropdown-options')
+    .subscribe({
+      next: (data) => {
+        this.stitchingDropdownOptions = data;
+      },
+      error: (error) => {
+        console.error('Error loading dropdown options:', error);
+      }
+    });
+}
+
+validateDispatchForm(): boolean {
+  this.validationErrors = {};
+  this.shakeFields = {};
+  const selectedOption = this.stitchingDropdownOptions.find(opt => opt.Stitching_Details_Id === this.selectedStitchingId);
+  if (!this.selectedStitchingId) {
+    this.validationErrors['Stitching_Details_Id'] = 'Please select stitched material.';
+    this.shakeFields['Stitching_Details_Id'] = true;
+  }
+
+  if (!this.newDispatch.Dispatch_Date) {
+    this.validationErrors['Dispatch_Date'] = 'Dispatch date is required.';
+    this.shakeFields['Dispatch_Date'] = true;
+  }
+
+  if (this.newDispatch.Quantity_Dispatched == null || this.newDispatch.Quantity_Dispatched <= 0) {
+  this.validationErrors['Quantity_Dispatched'] = 'Quantity must be greater than zero.';
+  this.shakeFields['Quantity_Dispatched'] = true;
+} else if (selectedOption && this.newDispatch.Quantity_Dispatched > selectedOption.Quantity_Stitched) {
+  this.validationErrors['Quantity_Dispatched'] = 'Quantity cannot exceed available stock.';
+  this.shakeFields['Quantity_Dispatched'] = true;
+} else {
+  // Clear error if valid
+  delete this.validationErrors['Quantity_Dispatched'];
+  this.shakeFields['Quantity_Dispatched'] = false;
+}
+
+  if (!this.newDispatch.Price || this.newDispatch.Price <= 0) {
+    this.validationErrors['Price'] = 'Enter a valid price.';
+    this.shakeFields['Price'] = true;
+  }
+
+  if (!this.newDispatch.Receiver_Name?.trim()) {
+    this.validationErrors['Receiver_Name'] = 'Receiver name is required.';
+    this.shakeFields['Receiver_Name'] = true;
+  }
+
+  if (this.newDispatch.Dispatch_Status === null || this.newDispatch.Dispatch_Status === undefined) {
+    this.validationErrors['Dispatch_Status'] = 'Please select status.';
+    this.shakeFields['Dispatch_Status'] = true;
+  }
+
+  // Remove shake effect after animation
+  setTimeout(() => {
+    this.shakeFields = {};
+  }, 300);
+
+  return Object.keys(this.validationErrors).length === 0;
+}
+
+setError(field: string, message: string): void {
+  this.validationErrors[field] = message;
+  this.shakeFields[field] = true;
+  setTimeout(() => this.shakeFields[field] = false, 500);
+}
+
+
+  addDispatch(): void {
+  this.newDispatch.Stitching_Details_Id = this.selectedStitchingId;
+
+  if (!this.validateDispatchForm()) return;
+
+  this.dispatchService.createDispatch(this.newDispatch).subscribe({
+    next: () => {
+      this.loadDispatches();
+      this.newDispatch = {};
     },
     error: (err) => {
-      console.error('Failed to load stitching details', err);
+      console.error('Dispatch error:', err);
     }
   });
 }
 
 
-  addDispatch(): void {
-    this.dispatchService.createDispatch(this.newDispatch).subscribe({
-      next: () => {
-        this.loadDispatches();
-        this.newDispatch = {};
-        this.snackBar.open('Dispatch added successfully!', 'Close', {
-          duration: 3000,
-          verticalPosition: 'top'
-        });
-      },
-      error: (error) => {
-        console.error('Dispatch creation error:', error);
-        if (error.status === 404 && error.error.detail === 'Stitching Details ID does not exist.') {
-          this.snackBar.open('Error: Stitching Details ID does not exist.', 'Close', {
-            duration: 5000,
-            verticalPosition: 'top',
-            panelClass: ['snackbar-error']
-          });
-        } else if (error.status === 422) {
-          this.snackBar.open('Please check the input fields for errors.', 'Close', {
-            duration: 5000,
-            verticalPosition: 'top',
-            panelClass: ['snackbar-error']
-          });
-        } else if (
-          error.status === 400 &&
-          error.error.detail === 'Not enough stitched quantity available for dispatch.'
-        ) {
-          this.snackBar.open('Error: Not enough stitched quantity available.', 'Close', {
-            duration: 5000,
-            verticalPosition: 'top',
-            panelClass: ['snackbar-error']
-          });
-        } else {
-          this.snackBar.open('An unexpected error occurred.', 'Close', {
-            duration: 5000,
-            verticalPosition: 'top',
-            panelClass: ['snackbar-error']
-          });
-        }
-      }
-    });
-  }
+updateDispatch(): void {
+  if (!this.validateDispatchForm()) return;
+
+  this.dispatchService.updateDispatch(this.newDispatch.Dispatch_Id, this.newDispatch).subscribe({
+    next: () => {
+      this.loadDispatches();
+      this.newDispatch = {};
+      this.editMode = false;
+    },
+    error: (error) => {
+      console.error('Update error:', error);
+      // Optionally, handle 400/422 errors if you want to display additional messages
+    }
+  });
+}
+
 
   editDispatch(dispatch: any): void {
     this.newDispatch = { ...dispatch };
     this.editMode = true;
   }
 
-  updateDispatch(): void {
-    this.dispatchService.updateDispatch(this.newDispatch.Dispatch_Id, this.newDispatch).subscribe(() => {
-      this.loadDispatches();
-      this.newDispatch = {};
-      this.editMode = false;
-    });
-  }
-
-  deleteDispatch(id: number): void {
-    this.dispatchService.deleteDispatch(id).subscribe(() => {
-      this.loadDispatches();
-    });
-  }
+  // deleteDispatch(id: number): void {
+  //   this.dispatchService.deleteDispatch(id).subscribe(() => {
+  //     this.loadDispatches();
+  //   });
+  // }
 
   cancelEdit(): void {
-    this.newDispatch = {};
-    this.editMode = false;
-  }
-
-  goHome(): void {
-    this.router.navigate(['/home']);
-  }
+  this.newDispatch = {};
+  this.editMode = false;
+  this.validationErrors = {};
+  this.shakeFields = {};
+}
   
   printTable(): void {
   const printContents = document.getElementById('dispatchPrintArea')?.innerHTML;

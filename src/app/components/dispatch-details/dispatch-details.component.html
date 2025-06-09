@@ -2,30 +2,29 @@
   <h2>Dispatch Details</h2>
 
   <div class="top-buttons">
-  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
-  <!-- <button class="btn-home" (click)="goHome()">Home</button> -->
+    <button class="btn-print" (click)="printTable()">🖨️ Print</button>
   </div>
 
-
   <!-- Add/Edit Form -->
-  <form (ngSubmit)="editMode ? updateDispatch() : addDispatch()" class="material-form">
+  <form (ngSubmit)="editMode ? updateDispatch() : addDispatch()" class="material-form" novalidate>
     <div class="form-row">
       <div class="form-group">
-  <label for="stitchingDetailId">Stitching Detail ID *</label>
-  <select
-    id="stitchingDetailId"
-    [(ngModel)]="newDispatch.Stitching_Details_Id"
-    name="Stitching_Detail_Id"
-    required
-  >
-    <option [ngValue]="null" disabled selected>Select a stitching detail</option>
-    <option *ngFor="let sd of stitchingDetailOptions" [ngValue]="sd.id">
-      id: {{ sd.id }}, qty: {{ sd.qty }}
-    </option>
-  </select>
-</div>
-
-
+        <label for="stitchingDetailId">Stitching Detail ID *</label>
+        <select
+          [(ngModel)]="selectedStitchingId"
+          name="stitchingDropdown"
+          class="form-control"
+          [ngClass]="{ 'error-input': validationErrors['Stitching_Details_Id'], 'shake': shakeFields['Stitching_Details_Id'] }"
+        >
+          <option [ngValue]="null" disabled selected>Select stitched material</option>
+          <option *ngFor="let item of stitchingDropdownOptions" [ngValue]="item.Stitching_Details_Id">
+            {{ item.Material_Desc }} ({{ item.Color }}) - Qty: {{ item.Quantity_Stitched }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="validationErrors['Stitching_Details_Id']">
+          {{ validationErrors['Stitching_Details_Id'] }}
+        </div>
+      </div>
 
       <div class="form-group">
         <label for="dispatchDate">Dispatch Date *</label>
@@ -34,21 +33,27 @@
           type="date"
           [(ngModel)]="newDispatch.Dispatch_Date"
           name="Dispatch_Date"
-          required
+          [ngClass]="{ 'error-input': validationErrors['Dispatch_Date'], 'shake': shakeFields['Dispatch_Date'] }"
         />
+        <div class="error-message" *ngIf="validationErrors['Dispatch_Date']">
+          {{ validationErrors['Dispatch_Date'] }}
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="qty">Quantity Dispatched *</label>
+        <label for="qty">Quantity for Dispatch *</label>
         <input
           id="qty"
           type="number"
           [(ngModel)]="newDispatch.Quantity_Dispatched"
           name="Quantity_Dispatched"
-          required
           min="1"
           placeholder="Qty"
+          [ngClass]="{ 'error-input': validationErrors['Quantity_Dispatched'], 'shake': shakeFields['Quantity_Dispatched'] }"
         />
+        <div class="error-message" *ngIf="validationErrors['Quantity_Dispatched']">
+          {{ validationErrors['Quantity_Dispatched'] }}
+        </div>
       </div>
     </div>
 
@@ -62,9 +67,12 @@
           min="0"
           [(ngModel)]="newDispatch.Price"
           name="Price"
-          required
           placeholder="Enter price"
+          [ngClass]="{ 'error-input': validationErrors['Price'], 'shake': shakeFields['Price'] }"
         />
+        <div class="error-message" *ngIf="validationErrors['Price']">
+          {{ validationErrors['Price'] }}
+        </div>
       </div>
 
       <div class="form-group">
@@ -74,17 +82,28 @@
           type="text"
           [(ngModel)]="newDispatch.Receiver_Name"
           name="Receiver_Name"
-          required
           placeholder="Enter receiver name"
+          [ngClass]="{ 'error-input': validationErrors['Receiver_Name'], 'shake': shakeFields['Receiver_Name'] }"
         />
+        <div class="error-message" *ngIf="validationErrors['Receiver_Name']">
+          {{ validationErrors['Receiver_Name'] }}
+        </div>
       </div>
 
       <div class="form-group">
         <label for="status">Dispatch Status *</label>
-        <select id="status" [(ngModel)]="newDispatch.Dispatch_Status" name="Dispatch_Status" required>
+        <select
+          id="status"
+          [(ngModel)]="newDispatch.Dispatch_Status"
+          name="Dispatch_Status"
+          [ngClass]="{ 'error-input': validationErrors['Dispatch_Status'], 'shake': shakeFields['Dispatch_Status'] }"
+        >
           <option [value]="true">Dispatched</option>
           <option [value]="false">Pending</option>
         </select>
+        <div class="error-message" *ngIf="validationErrors['Dispatch_Status']">
+          {{ validationErrors['Dispatch_Status'] }}
+        </div>
       </div>
     </div>
 
@@ -114,7 +133,7 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Stitching ID</th>
+        <th>Material</th>
         <th>Date</th>
         <th>Qty</th>
         <th>Price</th>
@@ -127,7 +146,7 @@
     <tbody>
       <tr *ngFor="let d of dispatches">
         <td>{{ d.Dispatch_Id }}</td>
-        <td>{{ d.Stitching_Details_Id }}</td>
+        <td>{{ d.Material_Desc }}</td>
         <td>{{ d.Dispatch_Date | date: 'yyyy-MM-dd' }}</td>
         <td>{{ d.Quantity_Dispatched }}</td>
         <td>{{ d.Price | currency: 'INR' }}</td>
@@ -136,7 +155,6 @@
         <td>{{ d.Remarks }}</td>
         <td>
           <button class="btn btn-edit" (click)="editDispatch(d)">Edit</button>
-          <button class="btn btn-delete" (click)="deleteDispatch(d.Dispatch_Id)">Delete</button>
         </td>
       </tr>
     </tbody>
@@ -146,37 +164,38 @@
 
   <!-- Hidden Printable Table -->
   <div id="dispatchPrintArea" style="display: none;">
-  <h3>Dispatch Details</h3>
-  <table border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>Dispatch ID</th>
-        <th>Stitching Details ID</th>
-        <th>Dispatch Date</th>
-        <th>Quantity Dispatched</th>
-        <th>Price</th>
-        <th>Receiver Name</th>
-        <th>Dispatched Status</th>
-        <th>Remarks</th>
-        <th>Entry Date</th>
-        <th>Modified Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let dispatch of dispatches">
-        <td>{{ dispatch.Dispatch_Id }}</td>
-        <td>{{ dispatch.Stitching_Details_Id }}</td>
-        <td>{{ dispatch.Dispatch_Date }}</td>
-        <td>{{ dispatch.Quantity_Dispatched }}</td>
-        <td>{{ dispatch.Price }}</td>
-        <td>{{ dispatch.Receiver_Name }}</td>
-        <td>{{ dispatch.Dispatch_Status ? 'Yes' : 'No' }}</td>
-        <td>{{ dispatch.Remarks }}</td>
-        <td>{{ dispatch.Entry_Date }}</td>
-        <td>{{ dispatch.Modified_Date }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+    <h3>Dispatch Details</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Dispatch ID</th>
+          <th>Stitching Details ID</th>
+          <th>Material_Desc</th>
+          <th>Dispatch Date</th>
+          <th>Quantity Dispatched</th>
+          <th>Price</th>
+          <th>Receiver Name</th>
+          <th>Dispatched Status</th>
+          <th>Remarks</th>
+          <th>Entry Date</th>
+          <th>Modified Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dispatch of dispatches">
+          <td>{{ dispatch.Dispatch_Id }}</td>
+          <td>{{ dispatch.Stitching_Details_Id }}</td>
+          <td>{{ dispatch.Material_Desc }}</td>
+          <td>{{ dispatch.Dispatch_Date }}</td>
+          <td>{{ dispatch.Quantity_Dispatched }}</td>
+          <td>{{ dispatch.Price }}</td>
+          <td>{{ dispatch.Receiver_Name }}</td>
+          <td>{{ dispatch.Dispatch_Status ? 'Yes' : 'No' }}</td>
+          <td>{{ dispatch.Remarks }}</td>
+          <td>{{ dispatch.Entry_Date }}</td>
+          <td>{{ dispatch.Modified_Date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

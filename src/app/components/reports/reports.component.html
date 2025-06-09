@@ -1,0 +1,484 @@
+<div class="report-container">
+  <header class="report-header">
+  <h1>Garments Management System - Reports</h1>
+  <div class="header-buttons">
+    <button class="btn-home" (click)="goHome()">🏠 Home</button>
+    <button class="generate-button" (click)="openGenerateReport()">Generate Report</button>
+  </div>
+</header>
+
+
+  <div class="report-body">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul>
+        <li [class.active]="selectedReportSection === 'dashboard'" (click)="selectReport('dashboard')">Dashboard</li>
+        <li [class.active]="selectedReportSection === 'material'" (click)="selectReport('material')">Material Master</li>
+        <li [class.active]="selectedReportSection === 'process'" (click)="selectReport('process')">Material Process</li>
+        <li [class.active]="selectedReportSection === 'stitching'" (click)="selectReport('stitching')">Stitching Details</li>
+        <li [class.active]="selectedReportSection === 'tailor'" (click)="selectReport('tailor')">Tailor Master</li>
+        <li [class.active]="selectedReportSection === 'dispatch'" (click)="selectReport('dispatch')">Dispatch</li>
+      </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <!-- DASHBOARD SECTION -->
+      <div *ngIf="selectedReportSection === 'dashboard'">
+        <h2>Dashboard Summary</h2>
+
+        <div class="chart-section">
+          <h3>Price & Profit Over Time</h3>
+          <canvas id="lineChart" width="600" height="300"></canvas>
+        </div>
+
+        <div class="chart-section">
+          <h3>Stitched Quantity by Material Type</h3>
+          <canvas id="donutChartStitched" width="400" height="400"></canvas>
+        </div>
+      </div>
+
+      <!-- Future sections for other reports -->
+      <div *ngIf="selectedReportSection === 'material'">
+  <h2>Material Master Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterFromDate" (change)="filterMaterialsByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterToDate" (change)="filterMaterialsByDate()" />
+    </label>
+  </div>
+
+  <!-- Material data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortTable('Material_Id')">
+          Material ID <span *ngIf="sortColumn === 'Material_Id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Material_Desc')">
+          Material Description <span *ngIf="sortColumn === 'Material_Desc'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Quantity')">
+          Quantity <span *ngIf="sortColumn === 'Quantity'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Color')">
+          Color <span *ngIf="sortColumn === 'Color'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Price')">
+          Price <span *ngIf="sortColumn === 'Price'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Pattern')">
+          Pattern <span *ngIf="sortColumn === 'Pattern'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Purchase_Date')">
+          Purchase Date <span *ngIf="sortColumn === 'Purchase_Date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th>Comments</th>
+        <th (click)="sortTable('Entry_Date')">
+          Entry Date <span *ngIf="sortColumn === 'Entry_Date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Modified_Date')">
+          Modified Date <span *ngIf="sortColumn === 'Modified_Date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let material of pagedMaterials">
+        <td>{{ material.Material_Id }}</td>
+        <td>{{ material.Material_Desc }}</td>
+        <td>{{ material.Quantity }}</td>
+        <td>{{ material.Color }}</td>
+        <td>{{ material.Price }}</td>
+        <td>{{ material.Pattern }}</td>
+        <td>{{ material.Purchase_Date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ material.Comments }}</td>
+        <td>{{ material.Entry_Date }}</td>
+        <td>{{ material.Modified_Date }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      (click)="goToPage(i + 1)"
+      [class.active]="currentPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+
+  <!-- Donut chart showing quantity by material description -->
+  <div class="chart-container">
+    <canvas #donutChartMaterial width="400" height="400"></canvas>
+  </div>
+  <canvas #materialBarChart width="500" height="500"></canvas>
+</div>
+
+
+      <div *ngIf="selectedReportSection === 'process'">
+  <h2>Material Process Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterProcessFromDate" (change)="filterProcessByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterProcessToDate" (change)="filterProcessByDate()" />
+    </label>
+  </div>
+
+  <!-- Process data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortProcessTable('Material_Process_Id')">
+          Process ID <span *ngIf="processSortColumn === 'Process_Id'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Material_Id')">
+          Material ID <span *ngIf="processSortColumn === 'Material_Id'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Material_Desc')">
+          Material Description <span *ngIf="processSortColumn === 'Material_Desc'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Color')">
+          Color <span *ngIf="processSortColumn === 'Color'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Quantity_Processed')">
+          Quantity Processed <span *ngIf="processSortColumn === 'Quantity_Processed'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Processed_Date')">
+          Processed Date <span *ngIf="processSortColumn === 'Processed_Date'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Entry_Date')">
+          Entry Date <span *ngIf="processSortColumn === 'Entry_Date'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Modified_Date')">
+          Modified Date <span *ngIf="processSortColumn === 'Modified_Date'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr *ngFor="let row of pagedProcessData">
+    <td>{{ row.Material_Process_Id }}</td>
+    <td>{{ row.Material_Id }}</td>
+    <td>{{ row.Material_Desc }}</td>
+    <td>{{ row.Color }}</td>
+    <td>{{ row.Quantity_Processed }}</td>
+    <td>{{ row.Processed_Date | date:'mediumDate' }}</td>
+    <td>{{ row.Entry_Date | date:'short' }}</td>
+    <td>{{ row.Modified_Date | date:'short' }}</td>
+  </tr>
+</tbody>
+
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToProcessPage(currentProcessPage - 1)" [disabled]="currentProcessPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalProcessPages); let i = index"
+      (click)="goToProcessPage(i + 1)"
+      [class.active]="currentProcessPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToProcessPage(currentProcessPage + 1)" [disabled]="currentProcessPage === totalProcessPages">Next</button>
+  </div>
+  <div class="chart-container">
+    <canvas #donutChartProcess width="400" height="400"></canvas>
+  </div>
+</div>
+
+
+      <div *ngIf="selectedReportSection === 'stitching'">
+  <h2>Stitching Details Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterStitchingFromDate" (change)="filterStitchingByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterStitchingToDate" (change)="filterStitchingByDate()" />
+    </label>
+  </div>
+
+  <!-- Stitching data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortStitchingTable('Stitching_Details_Id')">
+          Stitching ID <span *ngIf="stitchingSortColumn === 'Stitching_Details_Id'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Material_Process_Id')">
+          Material Process ID <span *ngIf="stitchingSortColumn === 'Material_Process_Id'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Material_Desc')">
+          Material Description <span *ngIf="stitchingSortColumn === 'Material_Desc'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Size')">
+          Size <span *ngIf="stitchingSortColumn === 'Size'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Stitching_Date')">
+          Stitching Date <span *ngIf="stitchingSortColumn === 'Stitching_Date'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Stitching_Status')">
+          Stitching Status <span *ngIf="stitchingSortColumn === 'Stitching_Status'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Quantity_Stitched')">
+          Quantity Stitched <span *ngIf="stitchingSortColumn === 'Quantity_Stitched'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Tailor_Id')">
+          Tailor ID <span *ngIf="stitchingSortColumn === 'Tailor_Id'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Quality_Check_Status')">
+          Quality Check <span *ngIf="stitchingSortColumn === 'Quality_Check_Status'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Entry_Date')">
+          Entry Date <span *ngIf="stitchingSortColumn === 'Entry_Date'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Modified_Date')">
+          Modified Date <span *ngIf="stitchingSortColumn === 'Modified_Date'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of pagedStitchingData">
+        <td>{{ item.Stitching_Details_Id }}</td>
+        <td>{{ item.Material_Process_Id }}</td>
+        <td>{{ item.Material_Desc }}</td>
+        <td>{{ item.Size }}</td>
+        <td>{{ item.Stitching_Date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ item.Stitching_Status }}</td>
+        <td>{{ item.Quantity_Stitched }}</td>
+        <td>{{ item.Tailor_Id }}</td>
+        <td>{{ item.Quality_Check_Status }}</td>
+        <td>{{ item.Entry_Date }}</td>
+        <td>{{ item.Modified_Date }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToStitchingPage(currentStitchingPage - 1)" [disabled]="currentStitchingPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalStitchingPages); let i = index"
+      (click)="goToStitchingPage(i + 1)"
+      [class.active]="currentStitchingPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToStitchingPage(currentStitchingPage + 1)" [disabled]="currentStitchingPage === totalStitchingPages">Next</button>
+  </div>
+
+  <!-- Donut chart showing Quantity Stitched by Material Description -->
+  <div class="chart-container">
+    <canvas #donutChartStitching width="400" height="400"></canvas>
+  </div>
+</div>
+      
+<div *ngIf="selectedReportSection === 'tailor'">
+  <h2>Tailor Master Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterTailorFromDate" (change)="filterTailorByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterTailorToDate" (change)="filterTailorByDate()" />
+    </label>
+  </div>
+
+  <!-- Tailor data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortTailorTable('Tailor_Id')">
+          Tailor ID <span *ngIf="tailorSortColumn === 'Tailor_Id'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Name')">
+          Name <span *ngIf="tailorSortColumn === 'Name'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Age')">
+          Age <span *ngIf="tailorSortColumn === 'Age'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Gender')">
+          Gender <span *ngIf="tailorSortColumn === 'Gender'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Contact')">
+          Contact <span *ngIf="tailorSortColumn === 'Contact'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Experience')">
+          Experience <span *ngIf="tailorSortColumn === 'Experience'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Address')">
+          Address <span *ngIf="tailorSortColumn === 'Address'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Date_of_Joining')">
+          Joining Date <span *ngIf="tailorSortColumn === 'Date_of_Joining'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Entry_Date')">
+          Entry Date <span *ngIf="tailorSortColumn === 'Entry_Date'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Modified_Date')">
+          Modified Date <span *ngIf="tailorSortColumn === 'Modified_Date'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of pagedTailorData">
+        <td>{{ t.Tailor_Id }}</td>
+        <td>{{ t.Tailor_Name }}</td>
+        <td>{{ t.Age }}</td>
+        <td>{{ t.Gender }}</td>
+        <td>{{ t.Contact }}</td>
+        <td>{{ t.Experience }}</td>
+        <td>{{ t.Address }}</td>
+        <td>{{ t.Date_of_Joining | date: 'mediumDate' }}</td>
+        <td>{{ t.Entry_Date | date: 'short' }}</td>
+        <td>{{ t.Modified_Date | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToTailorPage(currentTailorPage - 1)" [disabled]="currentTailorPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalTailorPages); let i = index"
+      (click)="goToTailorPage(i + 1)"
+      [class.active]="currentTailorPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToTailorPage(currentTailorPage + 1)" [disabled]="currentTailorPage === totalTailorPages">Next</button>
+  </div>
+
+  <!-- Donut Chart -->
+  <div class="chart-container">
+    <canvas #donutChartTailor width="400" height="400"></canvas>
+  </div>
+</div>
+<div *ngIf="selectedReportSection === 'dispatch'">
+  <h2>Dispatch Report</h2>
+
+  <!-- Date Filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterDispatchFromDate" (change)="filterDispatchByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterDispatchToDate" (change)="filterDispatchByDate()" />
+    </label>
+  </div>
+
+  <!-- Dispatch Table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortDispatchTable('Dispatch_Id')">
+          Dispatch ID <span *ngIf="dispatchSortColumn === 'Dispatch_Id'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Stitching_Details_Id')">
+          Stitching Details ID <span *ngIf="dispatchSortColumn === 'Stitching_Details_Id'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Material_Desc')">
+          Material Description <span *ngIf="dispatchSortColumn === 'Material_Desc'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Dispatch_Date')">
+          Dispatch Date <span *ngIf="dispatchSortColumn === 'Dispatch_Date'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Quantity_Dispatched')">
+          Quantity <span *ngIf="dispatchSortColumn === 'Quantity_Dispatched'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Price')">
+          Price <span *ngIf="dispatchSortColumn === 'Price'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Receiver_Name')">
+          Receiver Name <span *ngIf="dispatchSortColumn === 'Receiver_Name'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Dispatch_Status')">
+          Status <span *ngIf="dispatchSortColumn === 'Dispatch_Status'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Remarks')">
+          Remarks <span *ngIf="dispatchSortColumn === 'Remarks'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Entry_Date')">
+          Entry Date <span *ngIf="dispatchSortColumn === 'Entry_Date'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Modified_Date')">
+          Modified Date <span *ngIf="dispatchSortColumn === 'Modified_Date'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of pagedDispatchData">
+        <td>{{ d.Dispatch_Id }}</td>
+        <td>{{ d.Stitching_Details_Id }}</td>
+        <td>{{ d.Material_Desc }}</td>
+        <td>{{ d.Dispatch_Date | date: 'mediumDate' }}</td>
+        <td>{{ d.Quantity_Dispatched }}</td>
+        <td>{{ d.Price }}</td>
+        <td>{{ d.Receiver_Name }}</td>
+        <td>{{ d.Dispatch_Status }}</td>
+        <td>{{ d.Remarks || '-' }}</td>
+        <td>{{ d.Entry_Date | date: 'short' }}</td>
+        <td>{{ d.Modified_Date | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button (click)="goToDispatchPage(currentDispatchPage - 1)" [disabled]="currentDispatchPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalDispatchPages); let i = index"
+      (click)="goToDispatchPage(i + 1)"
+      [class.active]="currentDispatchPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToDispatchPage(currentDispatchPage + 1)" [disabled]="currentDispatchPage === totalDispatchPages">Next</button>
+  </div>
+
+  <!-- Donut Chart -->
+  <div class="chart-container">
+    <canvas #donutChartDispatch width="400" height="400"></canvas>
+  </div>
+</div>
+
+      
+    </main>
+  </div>
+</div>

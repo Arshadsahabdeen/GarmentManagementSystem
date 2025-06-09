@@ -1,91 +1,149 @@
 <div class="container">
   <h2>Stitching Details</h2>
   <div class="top-buttons">
-  <button class="btn-print" (click)="printTable()">🖨️ Print</button>
-  <!-- <button class="btn-home" (click)="goHome()">Home</button> -->
+    <button class="btn-print" (click)="printTable()">🖨️ Print</button>
   </div>
 
-  <form (ngSubmit)="editMode ? updateDetail() : addDetail()" class="material-form">
-    <div class="form-row">
-      <div class="form-group">
-  <label for="materialProcessId">Material Process ID *</label>
-  <select
-  id="materialProcessId"
-  [(ngModel)]="newDetails.Material_Process_Id"
-  name="Material_Process_Id"
-  required
->
-  <option [ngValue]="null" disabled selected>Select a material process</option>
-  <option *ngFor="let mp of materialProcessOptions" [ngValue]="mp.id">
-    id: {{ mp.id }}, qty: {{ mp.qty }}
-  </option>
-</select>
-
-</div>
-
-
-      <div class="form-group">
-  <label>Size (in m)</label>
-  <input type="number" [(ngModel)]="newDetails.Size" name="Size" (ngModelChange)="onSizeChange()" />
-</div>
-      <div class="form-group">
-        <label>Stitching Date</label>
-        <input type="date" [(ngModel)]="newDetails.Stitching_Date" name="Stitching_Date" />
-      </div>
-      <div class="form-group">
-  <label>Stitching Status</label>
-<select [(ngModel)]="newDetails.Stitching_Status" name="Stitching_Status">
-  <option [ngValue]="true">Completed</option>
-  <option [ngValue]="false">Pending</option>
-</select>
-
-</div>
-
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-  <label>Quantity Stitched</label>
-  <input type="number" [(ngModel)]="newDetails.Quantity_Stitched" name="Quantity_Stitched" readonly />
-</div>
-      <div class="form-group">
-  <label for="tailorId">Tailor *</label>
-  <select
-    id="tailorId"
-    [(ngModel)]="newDetails.Tailor_Id"
-    name="Tailor_Id"
-    required
-  >
-    <option [ngValue]="null" disabled selected>Select a tailor</option>
-    <option *ngFor="let tailor of tailorOptions" [value]="tailor.id">
-      ID: {{ tailor.id }}, Name: {{ tailor.name }}
-    </option>
-  </select>
-</div>
-
-      <div class="form-group">
-        <label>Quality Check</label>
-<select [(ngModel)]="newDetails.Quality_Check_Status" name="Quality_Check_Status">
-  <option [ngValue]="true">Passed</option>
-  <option [ngValue]="false">Pending</option>
-</select>
-
+  <form (ngSubmit)="editMode ? updateDetail() : addDetail()" class="material-form" novalidate>
+  <div class="form-row">
+    <!-- Processed Material -->
+    <div class="form-group">
+      <label for="materialProcessId">Processed Material *</label>
+      <select
+        id="materialProcessId"
+        [(ngModel)]="newDetails.Material_Process_Id"
+        (change)="onMaterialProcessChange()"
+        name="Material_Process_Id"
+        [ngClass]="{ 'error-input': validationErrors['Material_Process_Id'], 'shake': shakeFields['Material_Process_Id'] }"
+      >
+        <option value="" disabled selected hidden>Select a processed material</option>
+        <option *ngFor="let mp of materialProcessOptions" [ngValue]="mp.id">
+          {{ mp.description }} - {{ mp.color }} - Qty: {{ mp.qty }}
+        </option>
+      </select>
+      <div *ngIf="validationErrors['Material_Process_Id']" class="error-text">
+        {{ validationErrors['Material_Process_Id'] }}
       </div>
     </div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">
-        {{ editMode ? 'Update' : 'Add' }}
-      </button>
-      <button *ngIf="editMode" type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+    <!-- Size -->
+    <div class="form-group">
+  <label>Size (in m) *</label>
+  <input
+  type="number"
+  [(ngModel)]="newDetails.Size"
+  name="Size"
+  min="1"
+  [max]="selectedMaterialQty"
+  (input)="onSizeInputChange()"
+  [ngClass]="{ 'error-input': validationErrors['Size'], 'shake': shakeFields['Size'] }"
+/>
+
+  <small class="text-muted" *ngIf="selectedMaterialQty > 0">
+    Available Quantity: {{ selectedMaterialQty }} m
+  </small>
+  <div *ngIf="validationErrors['Size']" class="error-text">
+    {{ validationErrors['Size'] }}
+  </div>
+</div>
+
+    <!-- Stitching Date -->
+    <div class="form-group">
+      <label>Stitching Date *</label>
+      <input
+        type="date"
+        [(ngModel)]="newDetails.Stitching_Date"
+        name="Stitching_Date"
+        [ngClass]="{ 'error-input': validationErrors['Stitching_Date'], 'shake': shakeFields['Stitching_Date'] }"
+      />
+      <div *ngIf="validationErrors['Stitching_Date']" class="error-text">
+        {{ validationErrors['Stitching_Date'] }}
+      </div>
     </div>
-  </form>
+
+    <!-- Stitching Status -->
+    <div class="form-group">
+      <label>Stitching Status *</label>
+      <select
+        [(ngModel)]="newDetails.Stitching_Status"
+        name="Stitching_Status"
+        [ngClass]="{ 'error-input': validationErrors['Stitching_Status'], 'shake': shakeFields['Stitching_Status'] }"
+      >
+        <option [ngValue]="true">Completed</option>
+        <option [ngValue]="false">Pending</option>
+      </select>
+      <div *ngIf="validationErrors['Stitching_Status']" class="error-text">
+        {{ validationErrors['Stitching_Status'] }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- Quantity Stitched -->
+    <div class="form-group">
+      <label>Quantity Stitched *</label>
+      <input
+        type="number"
+        [(ngModel)]="newDetails.Quantity_Stitched"
+        name="Quantity_Stitched"
+        readonly
+        [ngClass]="{ 'error-input': validationErrors['Quantity_Stitched'], 'shake': shakeFields['Quantity_Stitched'] }"
+      />
+      <div *ngIf="validationErrors['Quantity_Stitched']" class="error-text">
+        {{ validationErrors['Quantity_Stitched'] }}
+      </div>
+    </div>
+
+    <!-- Tailor -->
+    <div class="form-group">
+      <label for="tailorId">Tailor *</label>
+      <select
+        id="tailorId"
+        [(ngModel)]="newDetails.Tailor_Id"
+        name="Tailor_Id"
+        [ngClass]="{ 'error-input': validationErrors['Tailor_Id'], 'shake': shakeFields['Tailor_Id'] }"
+      >
+        <option [ngValue]="null" disabled selected>Select a tailor</option>
+        <option *ngFor="let tailor of tailorOptions" [value]="tailor.id">
+          Name: {{ tailor.name }}
+        </option>
+      </select>
+      <div *ngIf="validationErrors['Tailor_Id']" class="error-text">
+        {{ validationErrors['Tailor_Id'] }}
+      </div>
+    </div>
+
+    <!-- Quality Check -->
+    <div class="form-group">
+      <label>Quality Check *</label>
+      <select
+        [(ngModel)]="newDetails.Quality_Check_Status"
+        name="Quality_Check_Status"
+        [ngClass]="{ 'error-input': validationErrors['Quality_Check_Status'], 'shake': shakeFields['Quality_Check_Status'] }"
+      >
+        <option [ngValue]="true">Passed</option>
+        <option [ngValue]="false">Pending</option>
+      </select>
+      <div *ngIf="validationErrors['Quality_Check_Status']" class="error-text">
+        {{ validationErrors['Quality_Check_Status'] }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      {{ editMode ? 'Update' : 'Add' }}
+    </button>
+    <button *ngIf="editMode" type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+  </div>
+</form>
+
 
   <table class="materials-table" *ngIf="stitchingDetailsList.length > 0">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Material Process ID</th>
+        <th>Material Description</th>
         <th>Size (in m)</th>
         <th>Stitching Date</th>
         <th>Status</th>
@@ -98,7 +156,7 @@
     <tbody>
       <tr *ngFor="let sd of stitchingDetailsList">
         <td>{{ sd.Stitching_Details_Id }}</td>
-        <td>{{ sd.Material_Process_Id }}</td>
+        <td>{{ sd.Material_Desc }}</td>
         <td>{{ sd.Size }}</td>
         <td>{{ sd.Stitching_Date | date:'yyyy-MM-dd' }}</td>
         <td>{{ sd.Stitching_Status ? 'Yes' : 'No' }}</td>
@@ -107,45 +165,46 @@
         <td>{{ sd.Quality_Check_Status ? 'Yes' : 'No' }}</td>
         <td>
           <button class="btn btn-edit" (click)="editDetail(sd)">Edit</button>
-          <button class="btn btn-delete" (click)="deleteDetail(sd.Stitching_Details_Id!)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
 
   <p *ngIf="stitchingDetailsList.length === 0">No details found.</p>
-  <div id="stitchingPrintArea" style="display: none;">
-  <h3>Stitching Details</h3>
-  <table border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>Stitching ID</th>
-        <th>Material_Process_Id ID</th>
-        <th>Size</th>
-        <th>Stitching Date</th>
-        <th>Stitching Status</th>
-        <th>Quantity Stitched</th>
-        <th>Tailor ID</th>
-        <th>Quality Check</th>
-        <th>Entry Date</th>
-        <th>Modified Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let stitch of stitchingDetailsList">
-        <td>{{ stitch.Stitching_Details_Id }}</td>
-        <td>{{ stitch.Material_Process_Id }}</td>
-        <td>{{ stitch.Size }}</td>
-        <td>{{ stitch.Stitching_Date }}</td>
-        <td>{{ stitch.Stitching_Status }}</td>
-        <td>{{ stitch.Quantity_Stitched }}</td>
-        <td>{{ stitch.Tailor_Id }}</td>
-        <td>{{ stitch.Quality_Check_Status }}</td>
-        <td>{{ stitch.Entry_Date }}</td>
-        <td>{{ stitch.Modified_Date }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
+  <div id="stitchingPrintArea" style="display: none;">
+    <h3>Stitching Details</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Stitching ID</th>
+          <th>Material_Process_Id ID</th>
+          <th>Material Description</th>
+          <th>Size</th>
+          <th>Stitching Date</th>
+          <th>Stitching Status</th>
+          <th>Quantity Stitched</th>
+          <th>Tailor ID</th>
+          <th>Quality Check</th>
+          <th>Entry Date</th>
+          <th>Modified Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stitch of stitchingDetailsList">
+          <td>{{ stitch.Stitching_Details_Id }}</td>
+          <td>{{ stitch.Material_Process_Id }}</td>
+          <td>{{ stitch.Material_Desc }}</td>
+          <td>{{ stitch.Size }}</td>
+          <td>{{ stitch.Stitching_Date }}</td>
+          <td>{{ stitch.Stitching_Status }}</td>
+          <td>{{ stitch.Quantity_Stitched }}</td>
+          <td>{{ stitch.Tailor_Id }}</td>
+          <td>{{ stitch.Quality_Check_Status }}</td>
+          <td>{{ stitch.Entry_Date }}</td>
+          <td>{{ stitch.Modified_Date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
