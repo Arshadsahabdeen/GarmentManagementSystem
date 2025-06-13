@@ -17,7 +17,7 @@ export interface StitchedByMaterial {
   providedIn: 'root',
 })
 export class ReportService {
-  private baseUrl = 'http://localhost:8000/report'; // Adjust backend URL as needed
+  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/report'; // Adjust backend URL as needed
 
   constructor(private http: HttpClient) {}
 
