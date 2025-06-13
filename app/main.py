@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import auth, material_master, material_process,  stitching_details, tailor_master, dispatch, report
 
 app = FastAPI()
-app.mount("/", StaticFiles(directory="dist/login-frontend-v1", html=True), name="static")
 
 app.add_middleware(
     CORSMiddleware,
