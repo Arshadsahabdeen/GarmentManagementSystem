@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/v1/auth/login", tags=["auth"])
 app.include_router(material_master.router, prefix="/api/v1/material_master", tags=["Material Master"])
 app.include_router(material_process.router, prefix="/material-process", tags=["Material Process"])
 app.include_router(stitching_details.router, prefix="/stitching-details", tags=["Stitching Details"])
