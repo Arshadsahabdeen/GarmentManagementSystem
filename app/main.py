@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://garmentmanagementsystem-frontend.onrender.com"],
+    allow_origins=["https://garmentmanagementsystem-frontend.onrender.com","http://localhost:4200"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
