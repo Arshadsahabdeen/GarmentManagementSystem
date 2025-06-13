@@ -1,0 +1,100 @@
+<div class="material-report-container">
+  <h2>Material Master Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterFromDate" (change)="filterMaterialsByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterToDate" (change)="filterMaterialsByDate()" />
+    </label>
+<label for="materialFilter">Filter by Material:</label>
+<select id="materialFilter" [(ngModel)]="selectedMaterial" (change)="applyFilters()">
+  <option value="" disabled selected hidden>Select material</option>
+  <option *ngFor="let material of materialList" [value]="material">{{ material }}</option>
+</select>
+<select [(ngModel)]="selectedPatterns" (change)="applyFilters()">
+  <option value="" disabled selected hidden>Select Pattern</option>
+  <option *ngFor="let pattern of availablePatterns" [value]="pattern">{{ pattern }}</option>
+</select>
+    <button (click)="clearFilters()">Clear Filter</button>
+  </div>
+  <!-- Material data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortTable('Material_Id')">
+          Material ID <span *ngIf="sortColumn === 'Material_Id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Material_Desc')">
+          Material Description <span *ngIf="sortColumn === 'Material_Desc'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Quantity')">
+          Quantity <span *ngIf="sortColumn === 'Quantity'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Color')">
+          Color <span *ngIf="sortColumn === 'Color'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Price')">
+          Price <span *ngIf="sortColumn === 'Price'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Pattern')">
+          Pattern <span *ngIf="sortColumn === 'Pattern'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Purchase_Date')">
+          Purchase Date <span *ngIf="sortColumn === 'Purchase_Date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th>Comments</th>
+        <th (click)="sortTable('Entry_Date')">
+          Entry Date <span *ngIf="sortColumn === 'Entry_Date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTable('Modified_Date')">
+          Modified Date <span *ngIf="sortColumn === 'Modified_Date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let material of pagedMaterials">
+        <td>{{ material.Material_Id }}</td>
+        <td>{{ material.Material_Desc }}</td>
+        <td>{{ material.Quantity }}</td>
+        <td>{{ material.Color }}</td>
+        <td>{{ material.Price }}</td>
+        <td>{{ material.Pattern }}</td>
+        <td>{{ material.Purchase_Date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ material.Comments }}</td>
+        <td>{{ material.Entry_Date | date: 'short' }}</td>
+        <td>{{ material.Modified_Date | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      (click)="goToPage(i + 1)"
+      [class.active]="currentPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+
+  <!-- Donut chart showing quantity by material description -->
+  <div class="chart-row">
+  <div class="chart-box">
+    <canvas #donutChartMaterial width="400" height="400"></canvas>
+  </div>
+  <div class="chart-box">
+    <canvas #materialBarChart width="400" height="400"></canvas>
+  </div>
+</div>
+
+</div>

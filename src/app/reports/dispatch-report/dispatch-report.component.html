@@ -1,0 +1,91 @@
+<div class="dispatch-report">
+  <h2>Dispatch Report</h2>
+
+  <!-- Date Filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterDispatchFromDate" (change)="filterDispatchByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterDispatchToDate" (change)="filterDispatchByDate()" />
+    </label>
+  </div>
+
+  <!-- Dispatch Table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortDispatchTable('Dispatch_Id')">
+          Dispatch ID <span *ngIf="dispatchSortColumn === 'Dispatch_Id'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Stitching_Details_Id')">
+          Stitching Details ID <span *ngIf="dispatchSortColumn === 'Stitching_Details_Id'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Material_Desc')">
+          Material Description <span *ngIf="dispatchSortColumn === 'Material_Desc'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Dispatch_Date')">
+          Dispatch Date <span *ngIf="dispatchSortColumn === 'Dispatch_Date'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Quantity_Dispatched')">
+          Quantity <span *ngIf="dispatchSortColumn === 'Quantity_Dispatched'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Price')">
+          Price <span *ngIf="dispatchSortColumn === 'Price'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Receiver_Name')">
+          Receiver Name <span *ngIf="dispatchSortColumn === 'Receiver_Name'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Dispatch_Status')">
+          Dispatch Status <span *ngIf="dispatchSortColumn === 'Dispatch_Status'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Remarks')">
+          Remarks <span *ngIf="dispatchSortColumn === 'Remarks'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Entry_Date')">
+          Entry Date <span *ngIf="dispatchSortColumn === 'Entry_Date'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortDispatchTable('Modified_Date')">
+          Modified Date <span *ngIf="dispatchSortColumn === 'Modified_Date'">{{ dispatchSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of pagedDispatchData">
+        <td>{{ d.Dispatch_Id }}</td>
+        <td>{{ d.Stitching_Details_Id }}</td>
+        <td>{{ d.Material_Desc }}</td>
+        <td>{{ d.Dispatch_Date | date: 'mediumDate' }}</td>
+        <td>{{ d.Quantity_Dispatched }}</td>
+        <td>{{ d.Price }}</td>
+        <td>{{ d.Receiver_Name }}</td>
+        <td>{{ d.Dispatch_Status ? 'Dispatched' : 'Pending' }}</td>
+        <td>{{ d.Remarks || '-' }}</td>
+        <td>{{ d.Entry_Date | date: 'short' }}</td>
+        <td>{{ d.Modified_Date | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button (click)="goToDispatchPage(currentDispatchPage - 1)" [disabled]="currentDispatchPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalDispatchPages); let i = index"
+      (click)="goToDispatchPage(i + 1)"
+      [class.active]="currentDispatchPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToDispatchPage(currentDispatchPage + 1)" [disabled]="currentDispatchPage === totalDispatchPages">Next</button>
+  </div>
+
+  <!-- Donut Chart -->
+  <div class="chart-container">
+    <canvas #donutChartDispatch width="400" height="400"></canvas>
+  </div>
+</div>

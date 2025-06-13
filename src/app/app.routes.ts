@@ -7,11 +7,18 @@ import { MaterialProcessComponent } from './components/material-process/material
 import { StitchingDetailsComponent } from './components/stitching-details/stitching-details.component';
 import { TailorComponent } from './components/tailor-master/tailor-master.component';
 import { DispatchComponent } from './components/dispatch-details/dispatch-details.component';
-import { ReportComponent } from './components/reports/reports.component';
+
+import { GeneralReportComponent } from './reports/general-report/general-report.component';
+import { MaterialReportComponent } from './reports/material-report/material-report.component';
+import { ProcessReportComponent } from './reports/process-report/process-report.component';
+import { StitchingReportComponent } from './reports/stitching-report/stitching-report.component';
+import { TailorReportComponent } from './reports/tailor-report/tailor-report.component';
+import { DispatchReportComponent } from './reports/dispatch-report/dispatch-report.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+
   {
     path: 'home',
     component: HomeComponent,
@@ -25,6 +32,20 @@ export const routes: Routes = [
       { path: 'dispatch', component: DispatchComponent }
     ]
   },
-  { path: 'reports', component: ReportComponent },
+
+  {
+  path: 'reports',
+  component: GeneralReportComponent, // This includes the header/sidebar and <router-outlet>
+  children: [
+    { path: '', redirectTo: 'material', pathMatch: 'full' }, // Or whatever default
+    { path: 'material', component: MaterialReportComponent },
+    { path: 'process', component: ProcessReportComponent },
+    { path: 'stitching', component: StitchingReportComponent },
+    { path: 'tailor', component: TailorReportComponent },
+    { path: 'dispatch', component: DispatchReportComponent }
+  ]
+}
+,
+
   { path: '**', redirectTo: 'login' }
 ];

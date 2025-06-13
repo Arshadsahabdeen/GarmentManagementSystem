@@ -1,0 +1,87 @@
+<div class="tailor-report">
+  <h2>Tailor Master Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterTailorFromDate" (change)="filterTailorByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterTailorToDate" (change)="filterTailorByDate()" />
+    </label>
+  </div>
+
+  <!-- Tailor data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortTailorTable('Tailor_Id')">
+          Tailor ID <span *ngIf="tailorSortColumn === 'Tailor_Id'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Name')">
+          Name <span *ngIf="tailorSortColumn === 'Name'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Age')">
+          Age <span *ngIf="tailorSortColumn === 'Age'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Gender')">
+          Gender <span *ngIf="tailorSortColumn === 'Gender'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Contact')">
+          Contact <span *ngIf="tailorSortColumn === 'Contact'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Experience')">
+          Experience <span *ngIf="tailorSortColumn === 'Experience'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Address')">
+          Address <span *ngIf="tailorSortColumn === 'Address'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Date_of_Joining')">
+          Joining Date <span *ngIf="tailorSortColumn === 'Date_of_Joining'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Entry_Date')">
+          Entry Date <span *ngIf="tailorSortColumn === 'Entry_Date'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortTailorTable('Modified_Date')">
+          Modified Date <span *ngIf="tailorSortColumn === 'Modified_Date'">{{ tailorSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of pagedTailorData">
+        <td>{{ t.Tailor_Id }}</td>
+        <td>{{ t.Tailor_Name }}</td>
+        <td>{{ t.Age }}</td>
+        <td>{{ t.Gender }}</td>
+        <td>{{ t.Contact }}</td>
+        <td>{{ t.Experience }}</td>
+        <td>{{ t.Address }}</td>
+        <td>{{ t.Date_of_Joining | date: 'mediumDate' }}</td>
+        <td>{{ t.Entry_Date | date: 'short' }}</td>
+        <td>{{ t.Modified_Date | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToTailorPage(currentTailorPage - 1)" [disabled]="currentTailorPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalTailorPages); let i = index"
+      (click)="goToTailorPage(i + 1)"
+      [class.active]="currentTailorPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToTailorPage(currentTailorPage + 1)" [disabled]="currentTailorPage === totalTailorPages">Next</button>
+  </div>
+
+  <!-- Donut Chart -->
+  <div class="chart-container">
+    <canvas #donutChartTailor width="400" height="400"></canvas>
+  </div>
+</div>

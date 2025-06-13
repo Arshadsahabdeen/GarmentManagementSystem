@@ -34,4 +34,8 @@ export class ReportService {
   getQuantityStitchedByMaterial(): Observable<StitchedByMaterial[]> {
     return this.http.get<StitchedByMaterial[]>(`${this.baseUrl}/stitched-by-material`);
   }
+  getPriceProfitOverTime(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/price-profit-over-time`);
+  }
+
 }

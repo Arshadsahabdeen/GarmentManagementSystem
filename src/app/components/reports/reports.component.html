@@ -120,10 +120,15 @@
   </div>
 
   <!-- Donut chart showing quantity by material description -->
-  <div class="chart-container">
+  <div class="chart-row">
+  <div class="chart-box">
     <canvas #donutChartMaterial width="400" height="400"></canvas>
   </div>
-  <canvas #materialBarChart width="500" height="500"></canvas>
+  <div class="chart-box">
+    <canvas #materialBarChart width="400" height="400"></canvas>
+  </div>
+</div>
+
 </div>
 
 
@@ -201,9 +206,14 @@
 
     <button (click)="goToProcessPage(currentProcessPage + 1)" [disabled]="currentProcessPage === totalProcessPages">Next</button>
   </div>
-  <div class="chart-container">
+  <div class="chart-row">
+  <div class="chart-box">
     <canvas #donutChartProcess width="400" height="400"></canvas>
   </div>
+  <div class="chart-box">
+    <canvas #processLineChart width="400" height="400"></canvas>
+  </div>
+</div>
 </div>
 
 

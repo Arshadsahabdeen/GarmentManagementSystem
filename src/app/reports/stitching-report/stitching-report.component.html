@@ -1,0 +1,105 @@
+<div class="stitching-report">
+  <h2>Stitching Details Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterStitchingFromDate" (change)="filterStitchingByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterStitchingToDate" (change)="filterStitchingByDate()" />
+    </label>
+    <select [(ngModel)]="selectedMaterial" (change)="applyFilters()">
+  <option value="" disabled selected hidden>Select Material</option>
+  <option *ngFor="let mat of availableMaterials" [value]="mat">{{ mat }}</option>
+</select>
+<select [(ngModel)]="selectedQualityStatus" (change)="applyFilters()">
+  <option value="" disabled selected hidden>Select Quality Status</option>
+  <option *ngFor="let qc of availableQualityStatuses" [value]="qc">{{ qc }}</option>
+</select>
+<select [(ngModel)]="selectedStitchingStatus" (change)="applyFilters()">
+  <option value="" disabled selected hidden>Select Stitching Status</option>
+  <option *ngFor="let status of availableStitchingStatuses" [value]="status">{{ status }}</option>
+</select>
+<button (click)="clearFilters()">Clear Filters</button>
+
+  </div>
+
+  <!-- Stitching data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortStitchingTable('Stitching_Details_Id')">
+          Stitching ID <span *ngIf="stitchingSortColumn === 'Stitching_Details_Id'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Material_Process_Id')">
+          Material Process ID <span *ngIf="stitchingSortColumn === 'Material_Process_Id'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Material_Desc')">
+          Material Description <span *ngIf="stitchingSortColumn === 'Material_Desc'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Size')">
+          Size <span *ngIf="stitchingSortColumn === 'Size'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Stitching_Date')">
+          Stitching Date <span *ngIf="stitchingSortColumn === 'Stitching_Date'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Stitching_Status')">
+          Stitching Status <span *ngIf="stitchingSortColumn === 'Stitching_Status'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Quantity_Stitched')">
+          Quantity<br>Stitched <span *ngIf="stitchingSortColumn === 'Quantity_Stitched'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Tailor_Id')">
+          Tailor ID <span *ngIf="stitchingSortColumn === 'Tailor_Id'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Quality_Check_Status')">
+          Quality Check <span *ngIf="stitchingSortColumn === 'Quality_Check_Status'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Entry_Date')">
+          Entry Date <span *ngIf="stitchingSortColumn === 'Entry_Date'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortStitchingTable('Modified_Date')">
+          Modified Date <span *ngIf="stitchingSortColumn === 'Modified_Date'">{{ stitchingSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of pagedStitchingData">
+        <td>{{ item.Stitching_Details_Id }}</td>
+        <td>{{ item.Material_Process_Id }}</td>
+        <td>{{ item.Material_Desc }}</td>
+        <td>{{ item.Size }}</td>
+        <td>{{ item.Stitching_Date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ item.Stitching_Status ? 'Stitched' : 'Pending'}}</td>
+        <td>{{ item.Quantity_Stitched }}</td>
+        <td>{{ item.Tailor_Id }}</td>
+        <td>{{ item.Quality_Check_Status ? 'Passed' : 'Failed'}}</td>
+        <td>{{ item.Entry_Date | date: 'short' }}</td>
+        <td>{{ item.Modified_Date | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToStitchingPage(currentStitchingPage - 1)" [disabled]="currentStitchingPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalStitchingPages); let i = index"
+      (click)="goToStitchingPage(i + 1)"
+      [class.active]="currentStitchingPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToStitchingPage(currentStitchingPage + 1)" [disabled]="currentStitchingPage === totalStitchingPages">Next</button>
+  </div>
+
+  <!-- Donut chart showing Quantity Stitched by Material Description -->
+  <div class="chart-container">
+    <canvas #donutChartStitching width="400" height="400"></canvas>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+<div class="report-container">
+
+  <!-- Header -->
+  <header class="report-header">
+    <h1>Garments Management System - Reports</h1>
+    <div class="header-buttons">
+      <button class="btn-home" (click)="goHome()">🏠 Home</button>
+      <button class="generate-button" (click)="openGenerateReport()">Generate Report</button>
+    </div>
+  </header>
+
+  <!-- Body Section -->
+  <div class="report-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul>
+        <li [class.active]="selectedReportSection === 'dashboard'" (click)="selectReport('dashboard')">Dashboard</li>
+        <li [class.active]="selectedReportSection === 'material'" (click)="selectReport('material')">
+          <a routerLink="/reports/material">Material Details</a>
+        </li>
+        <li [class.active]="selectedReportSection === 'process'" (click)="selectReport('process')">
+          <a routerLink="/reports/process">Material Process</a>
+        </li>
+        <li [class.active]="selectedReportSection === 'stitching'" (click)="selectReport('stitching')">
+          <a routerLink="/reports/stitching">Stitching Details</a>
+        </li>
+        <li [class.active]="selectedReportSection === 'tailor'" (click)="selectReport('tailor')">
+          <a routerLink="/reports/tailor">Tailor Details</a>
+        </li>
+        <li [class.active]="selectedReportSection === 'dispatch'" (click)="selectReport('dispatch')">
+          <a routerLink="/reports/dispatch">Dispatch Details</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Dashboard View -->
+      <div *ngIf="selectedReportSection === 'dashboard'" class="dashboard-container">
+  <h2 class="dashboard-title">📊 Garments Management Summary</h2>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h4>Total Purchase</h4>
+      <p>₹ {{ priceProfitData.total_price_bought | number }}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Total Dispatch</h4>
+      <p>₹ {{ priceProfitData.total_price_sold | number }}</p>
+    </div>
+    <div class="summary-card profit" [class.positive]="priceProfitData.profit >= 0" [class.negative]="priceProfitData.profit < 0">
+      <h4>Profit</h4>
+      <p>₹ {{ priceProfitData.profit | number }}</p>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="chart-section">
+    <h3>📈 Price & Profit Over Time</h3>
+    <canvas id="lineChart" width="600" height="300"></canvas>
+  </div>
+
+  <div class="chart-section">
+    <h3>🧵 Stitched Quantity by Material Type</h3>
+    <canvas id="donutChartStitched" width="400" height="400"></canvas>
+  </div>
+</div>
+
+
+      <!-- Routed Report Component -->
+      <router-outlet *ngIf="selectedReportSection !== 'dashboard'"></router-outlet>
+
+    </main>
+
+    <!-- Generate Report Modal -->
+    <div class="modal-backdrop" *ngIf="showGenerateModal">
+      <div class="report-modal">
+        <h2>Select Report Parameters</h2>
+
+        <label for="component">Component:</label>
+        <select id="component" [(ngModel)]="selectedComponent">
+          <option value="dispatch">Dispatch</option>
+          <option value="material">Material</option>
+          <option value="process">Material Process</option>
+          <option value="stitching">Stitching</option>
+          <option value="tailor">Tailor</option>
+        </select>
+
+        <label for="fromDate">From Date:</label>
+        <input id="fromDate" type="date" [(ngModel)]="modalFromDate" />
+
+        <label for="toDate">To Date:</label>
+        <input id="toDate" type="date" [(ngModel)]="modalToDate" />
+
+        <label for="sortOrder">Sort:</label>
+        <select id="sortOrder" [(ngModel)]="modalSortOrder">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+
+        <div *ngIf="selectedComponent === 'dispatch'">
+          <label for="dispatchStatus">Status:</label>
+          <select id="dispatchStatus" [(ngModel)]="modalDispatchStatus">
+            <option value="">All</option>
+            <option value="true">Dispatched</option>
+            <option value="false">Pending</option>
+          </select>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn" (click)="confirmGenerateReport()">Generate</button>
+          <button class="btn cancel" (click)="closeGenerateModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

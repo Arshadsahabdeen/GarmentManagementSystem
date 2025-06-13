@@ -209,3 +209,4 @@ tbody td:nth-child(10) {
   tbody td:nth-of-type(9)::before { content: "Entry Date"; }
   tbody td:nth-of-type(10)::before { content: "Modified Date"; }
 }
+

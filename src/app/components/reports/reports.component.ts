@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ReportService, MaterialPriceSummary, StitchedByMaterial } from '../../services/report.service';
 import { Chart, registerables } from 'chart.js';
 import { CommonModule } from '@angular/common';
@@ -51,6 +51,7 @@ export class ReportComponent implements OnInit {
   totalProcessPages = 1;
   processSortColumn: string = 'Process_Id';
   processSortDirection: 'asc' | 'desc' = 'asc';
+  
 
   // Stitching details data
   filteredStitchingData: any[] = [];
@@ -108,6 +109,9 @@ export class ReportComponent implements OnInit {
 
   @ViewChild('donutChartProcess') donutChartProcessRef!: ElementRef<HTMLCanvasElement>;
   donutChartProcess: Chart | undefined;
+
+  @ViewChild('processLineChart') processLineChartRef!: ElementRef<HTMLCanvasElement>;
+  processLineChart: Chart | undefined;
 
   @ViewChild('donutChartStitching') donutChartStitchingRef!: ElementRef<HTMLCanvasElement>;
   donutChartStitching: Chart | undefined;
@@ -307,68 +311,75 @@ export class ReportComponent implements OnInit {
   }
 
   renderMaterialDonutChart() {
-    if (this.donutChartMaterials) this.donutChartMaterials.destroy();
+  if (this.donutChartMaterials) this.donutChartMaterials.destroy();
 
-    const quantityMap = new Map<string, number>();
-    this.filteredMaterials.forEach(m => {
-      const currentQty = quantityMap.get(m.Material_Desc) ?? 0;
-      quantityMap.set(m.Material_Desc, currentQty + m.Quantity);
-    });
+  if (!this.filteredMaterials || this.filteredMaterials.length === 0) return;
 
-    const labels = Array.from(quantityMap.keys());
-    const quantities = labels.map(l => quantityMap.get(l) ?? 0);
+  const quantityMap = new Map<string, number>();
 
-    if (!this.donutChartMaterialRef) return;
-    const canvas = this.donutChartMaterialRef.nativeElement;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  this.filteredMaterials.forEach(m => {
+    const desc = m.Material_Desc.trim().toLowerCase();
+    const qty = Number(m.Quantity) || 0;
+    const currentQty = quantityMap.get(desc) ?? 0;
+    quantityMap.set(desc, currentQty + qty);
+  });
 
-    this.donutChartMaterials = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels,
-        datasets: [{
-          data: quantities,
-          backgroundColor: [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'right' },
-          title: { display: true, text: 'Material Quantity Available' }
-        }
+  const labels = Array.from(quantityMap.keys()).map(label =>
+    label.charAt(0).toUpperCase() + label.slice(1)
+  );
+  const quantities = labels.map(label => quantityMap.get(label.toLowerCase()) ?? 0);
+
+  if (!this.donutChartMaterialRef) return;
+  const canvas = this.donutChartMaterialRef.nativeElement;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  this.donutChartMaterials = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: quantities,
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'right' },
+        title: { display: true, text: 'Material Quantity Available' }
       }
-    });
-  }
-  renderMaterialBarChart() {
+    }
+  });
+}
+
+
+ renderMaterialBarChart() {
   if (this.materialBarChart) this.materialBarChart.destroy();
 
   if (!this.filteredMaterials || this.filteredMaterials.length === 0) return;
 
-  // Step 1: Aggregate total price per material description
   const priceMap = new Map<string, number>();
+
   this.filteredMaterials.forEach(material => {
     const desc = material.Material_Desc.trim().toLowerCase();
+    const price = Number(material.Price) || 0;
     const currentPrice = priceMap.get(desc) ?? 0;
-    priceMap.set(desc, currentPrice + material.Price);
+    priceMap.set(desc, currentPrice + price);
   });
 
-  // Step 2: Prepare labels and data
   const labels = Array.from(priceMap.keys()).map(label =>
     label.charAt(0).toUpperCase() + label.slice(1)
   );
   const prices = labels.map(label => priceMap.get(label.toLowerCase()) ?? 0);
 
-  // Step 3: Get canvas context
   if (!this.materialBarChartRef) return;
   const canvas = this.materialBarChartRef.nativeElement;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // Step 4: Render chart
   this.materialBarChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -396,6 +407,7 @@ export class ReportComponent implements OnInit {
 }
 
 
+
   loadMaterialProcessData() {
     this.materialProcessService.getAll().subscribe((data) => {
       console.log('✅ Raw Material Process Data:', data);
@@ -409,6 +421,7 @@ export class ReportComponent implements OnInit {
 
       console.log('📊 Paged Material Process Data:', this.pagedProcessData);
       this.renderProcessDonutChart();
+      this.renderProcessQuantityOverTimeLineChart();
     });
   }
 
@@ -515,6 +528,70 @@ export class ReportComponent implements OnInit {
       }
     });
   }
+
+  renderProcessQuantityOverTimeLineChart() {
+  if (this.processLineChart) this.processLineChart.destroy();
+
+  if (!this.materialProcessData || this.materialProcessData.length === 0) return;
+
+  // Step 1: Aggregate total quantity per Processed_Date
+  const qtyByDate = new Map<string, number>();
+
+  this.materialProcessData.forEach(item => {
+    const date = item.Processed_Date; // assuming 'YYYY-MM-DD' string
+    const qty = Number(item.Quantity_Processed) || 0;
+    qtyByDate.set(date, (qtyByDate.get(date) ?? 0) + qty);
+  });
+
+  // Step 2: Sort dates chronologically
+  const sortedDates = Array.from(qtyByDate.keys()).sort();
+
+  // Step 3: Prepare data arrays
+  const quantities = sortedDates.map(date => qtyByDate.get(date) ?? 0);
+
+  // Step 4: Get canvas context
+  if (!this.processLineChartRef) return;
+  const canvas = this.processLineChartRef.nativeElement;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // Step 5: Create line chart
+  this.processLineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: sortedDates,
+      datasets: [{
+        label: 'Quantity Processed',
+        data: quantities,
+        borderColor: '#36A2EB',
+        backgroundColor: 'rgba(54,162,235,0.2)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          title: { display: true, text: 'Processed Date' },
+          type: 'time',
+          time: { unit: 'day', tooltipFormat: 'yyyy-MM-dd' }
+        },
+        y: {
+          title: { display: true, text: 'Quantity Processed' },
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        legend: { display: true },
+        tooltip: { mode: 'index', intersect: false }
+      }
+    }
+  });
+}
+
 
   loadStitchingDetailsData() {
     this.stitchingDetailsService.getAll().subscribe((data) => {

@@ -1,0 +1,92 @@
+<div class="process-report-container">
+  <h2>Material Process Report</h2>
+
+  <!-- Date range filters -->
+  <div class="date-filter">
+    <label>
+      From:
+      <input type="date" [(ngModel)]="filterProcessFromDate" (change)="filterProcessByDate()" />
+    </label>
+    <label>
+      To:
+      <input type="date" [(ngModel)]="filterProcessToDate" (change)="filterProcessByDate()" />
+    </label>
+    <select [(ngModel)]="selectedMaterial" (change)="applyFilters()">
+      <option value="" disabled selected hidden>Select Material</option>
+      <option *ngFor="let mat of availableMaterials" [value]="mat">{{ mat }}</option>
+    </select>
+    <select [(ngModel)]="selectedColor" (change)="applyFilters()">
+      <option value="" disabled selected hidden>Select Color</option>
+      <option *ngFor="let color of availableColors" [value]="color">{{ color }}</option>
+    </select>
+    <button (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <!-- Process data table -->
+  <table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th (click)="sortProcessTable('Material_Process_Id')">
+          Process ID <span *ngIf="processSortColumn === 'Process_Id'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Material_Id')">
+          Material ID <span *ngIf="processSortColumn === 'Material_Id'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Material_Desc')">
+          Material Description <span *ngIf="processSortColumn === 'Material_Desc'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Color')">
+          Color <span *ngIf="processSortColumn === 'Color'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Quantity_Processed')">
+          Quantity Processed <br>(Available) <span *ngIf="processSortColumn === 'Quantity_Processed'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Processed_Date')">
+          Processed Date <span *ngIf="processSortColumn === 'Processed_Date'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Entry_Date')">
+          Entry Date <span *ngIf="processSortColumn === 'Entry_Date'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="sortProcessTable('Modified_Date')">
+          Modified Date <span *ngIf="processSortColumn === 'Modified_Date'">{{ processSortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr *ngFor="let row of pagedProcessData">
+    <td>{{ row.Material_Process_Id }}</td>
+    <td>{{ row.Material_Id }}</td>
+    <td>{{ row.Material_Desc }}</td>
+    <td>{{ row.Color }}</td>
+    <td>{{ row.Quantity_Processed }}</td>
+    <td>{{ row.Processed_Date | date:'mediumDate' }}</td>
+    <td>{{ row.Entry_Date | date:'short' }}</td>
+    <td>{{ row.Modified_Date | date:'short' }}</td>
+  </tr>
+</tbody>
+
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="goToProcessPage(currentProcessPage - 1)" [disabled]="currentProcessPage === 1">Previous</button>
+
+    <button
+      *ngFor="let page of [].constructor(totalProcessPages); let i = index"
+      (click)="goToProcessPage(i + 1)"
+      [class.active]="currentProcessPage === (i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToProcessPage(currentProcessPage + 1)" [disabled]="currentProcessPage === totalProcessPages">Next</button>
+  </div>
+  <div class="chart-row">
+  <div class="chart-box">
+    <canvas #donutChartProcess width="400" height="400"></canvas>
+  </div>
+  <div class="chart-box">
+    <canvas #processLineChart width="400" height="400"></canvas>
+  </div>
+</div>
+</div>
