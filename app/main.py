@@ -5,6 +5,8 @@ from app.api.v1.endpoints import auth, material_master, material_process,  stitc
 
 app = FastAPI()
 
+app.mount("/", StaticFiles(directory="dist/login-frontend-v1/browser", html=True), name="static")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
