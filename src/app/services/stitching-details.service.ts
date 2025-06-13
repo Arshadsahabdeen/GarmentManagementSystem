@@ -7,7 +7,7 @@ import { StitchingDetails } from '../models/stitching-details.model';
   providedIn: 'root'
 })
 export class StitchingDetailsService {
-  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/stitching-details';
+  private baseUrl = 'https://garment-backend.onrender.com/stitching-details';
 
   constructor(private http: HttpClient) {}
 

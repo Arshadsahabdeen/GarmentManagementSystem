@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DispatchService {
-  private apiUrl = 'https://garmentmanagementsystem-backend.onrender.com/dispatch';
+  private apiUrl = 'https://garment-backend.onrender.com/dispatch';
 
   constructor(private http: HttpClient) {}
 
