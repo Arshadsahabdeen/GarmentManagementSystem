@@ -24,3 +24,9 @@ class ReportResponse(BaseModel):
     tableData: List[dict]
     totalRecords: int
     chartData: Optional[ChartData] = None
+
+class PriceProfitOverTimeOut(BaseModel):
+    date: str  # format: "YYYY-MM"
+    total_price_bought: float
+    total_price_sold: float
+    profit: float
