@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://garmentmanagementsystem-frontend.onrender.com"],
+    allow_origins=["https://garmentmanagementsystem-frontend.onrender.com",'https://style-share.netlify.app'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
