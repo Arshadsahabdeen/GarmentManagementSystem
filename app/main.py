@@ -23,4 +23,4 @@ app.include_router(report.router, prefix="/report", tags=["Report"])
 
 @app.get("/")
 def root():
-    return {"message": "Welcome! Use POST /api/v1/auth/login to get token."}
+    return {"message": "Welcome! Use POST /auth/login to get token."}
