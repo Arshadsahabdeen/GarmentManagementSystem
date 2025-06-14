@@ -15,7 +15,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(material_master.router, prefix="/material_master", tags=["Material Master"])
-app.include_router(material_process.router, prefix="/material-process/", tags=["Material Process"])
+app.include_router(material_process.router, prefix="/material-process", tags=["Material Process"])
 app.include_router(stitching_details.router, prefix="/stitching-details", tags=["Stitching Details"])
 app.include_router(tailor_master.router, prefix="/tailor-master", tags=["Tailor Master"])
 app.include_router(dispatch.router, prefix="/dispatch", tags=["Dispatch"])
