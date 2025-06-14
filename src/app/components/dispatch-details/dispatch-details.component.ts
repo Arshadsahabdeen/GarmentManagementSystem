@@ -56,7 +56,7 @@ shakeFields: { [key: string]: boolean } = {};
   }
 
   loadStitchingOptions() {
-  this.http.get<any[]>('http://localhost:8000/stitching-details/dropdown-options')
+  this.http.get<any[]>('ttps://garmentmanagementsystem-backend.onrender.com/stitching-details/dropdown-options')
     .subscribe({
       next: (data) => {
         this.stitchingDropdownOptions = data;
