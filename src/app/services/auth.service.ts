@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://garment-backend.onrender.com/auth/login';
+  private apiUrl = 'https://garmentmanagementsystem-backend.onrender.com/auth/login';
 
   constructor(private http: HttpClient) {}
 

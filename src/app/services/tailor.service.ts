@@ -5,7 +5,7 @@ import { Tailor } from '../models/tailor.model';
 
 @Injectable({ providedIn: 'root' })
 export class TailorService {
-  private baseUrl = 'https://garment-backend.onrender.com/tailor-master';
+  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/tailor-master';
 
   constructor(private http: HttpClient) {}
 
