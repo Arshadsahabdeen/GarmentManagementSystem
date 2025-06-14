@@ -3,7 +3,9 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 
 # Replace with your actual database connection string
-SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:root@localhost:3306/garment_db"
+SQLALCHEMY_DATABASE_URL = (
+    "mysql+pymysql://uf8nqwceg7hen4ls:fABMZigVfzcUCaXG758Z@bh9pddrgykbwbuzywtdb-mysql.services.clever-cloud.com:3306/bh9pddrgykbwbuzywtdb"
+)
 
 # Create engine
 engine = create_engine(
