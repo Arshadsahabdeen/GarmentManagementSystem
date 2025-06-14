@@ -19,7 +19,7 @@ export interface Material {
   providedIn: 'root',
 })
 export class MaterialService {
-  private baseUrl = 'https://garment-backend.onrender.com/api/v1/material_master'; // Change to your backend URL
+  private baseUrl = 'https://garment-backend.onrender.com/material_master'; // Change to your backend URL
 
   constructor(private http: HttpClient) {}
 
@@ -37,7 +37,7 @@ export class MaterialService {
 
  getMaterialDropdownOptions() {
   return this.http.get<{ Material_Id: number; description: string; color: string; qty: number }[]>(
-    'https://garment-backend.onrender.com/api/v1/material_master/dropdown-options'
+    'https://garment-backend.onrender.com/material_master/dropdown-options'
   );
 }
 
