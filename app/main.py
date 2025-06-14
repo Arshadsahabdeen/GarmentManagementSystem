@@ -7,14 +7,14 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://garmentmanagementsystem-frontend.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-app.include_router(material_master.router, prefix="/api/v1/material_master", tags=["Material Master"])
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(material_master.router, prefix="/material_master", tags=["Material Master"])
 app.include_router(material_process.router, prefix="/material-process", tags=["Material Process"])
 app.include_router(stitching_details.router, prefix="/stitching-details", tags=["Stitching Details"])
 app.include_router(tailor_master.router, prefix="/tailor-master", tags=["Tailor Master"])
