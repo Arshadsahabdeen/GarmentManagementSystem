@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, Date, TIMESTAMP, func
 from app.database import Base
 
 class Tailor_Master(Base):
-    __tablename__ = "Tailor_Master"
+    __tablename__ = "tailor_master"
 
     Tailor_Id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     Tailor_Name = Column(String(100), nullable=False)
