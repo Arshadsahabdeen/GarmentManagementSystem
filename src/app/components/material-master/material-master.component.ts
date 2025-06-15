@@ -21,9 +21,9 @@ export class MaterialMasterComponent implements OnInit {
 
   newMaterial: Partial<Material> = {
     Material_Desc: '',
-    Quantity: 0,
+    Quantity: undefined,
     Color: '',
-    Price: 0,
+    Price: undefined,
     Pattern: '',
     Purchase_Date: '',
     Comments: ''
@@ -37,11 +37,6 @@ export class MaterialMasterComponent implements OnInit {
 
   ngOnInit() {
     this.loadMaterials();
-    // Optional: fetch material names from API
-    // this.materialService.getMaterialNames().subscribe({
-    //   next: (names) => this.materialNames = names,
-    //   error: (err) => console.error('Failed to load material names', err)
-    // });
   }
 
   loadMaterials() {
@@ -71,6 +66,19 @@ export class MaterialMasterComponent implements OnInit {
   }
   if (!this.newMaterial['Purchase_Date']) {
     this.errors['Purchase_Date'] = 'Purchase date is required';
+  } else {
+    const purchaseDate = new Date(this.newMaterial['Purchase_Date']);
+    const today = new Date();
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(today.getDate() - 14);
+
+    if (isNaN(purchaseDate.getTime())) {
+      this.errors['Purchase_Date'] = 'Invalid purchase date.';
+    } else if (purchaseDate > today) {
+      this.errors['Purchase_Date'] = 'Purchase date cannot be in the future.';
+    } else if (purchaseDate < twoWeeksAgo) {
+      this.errors['Purchase_Date'] = 'Purchase date cannot be more than 2 weeks old.';
+    }
   }
 
   if (Object.keys(this.errors).length > 0) return;
@@ -83,6 +91,7 @@ export class MaterialMasterComponent implements OnInit {
     error: (err) => console.error('Failed to add material', err)
   });
 }
+
 
 
   editMaterial(material: Material) {
