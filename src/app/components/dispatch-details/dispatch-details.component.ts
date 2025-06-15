@@ -70,39 +70,59 @@ shakeFields: { [key: string]: boolean } = {};
 validateDispatchForm(): boolean {
   this.validationErrors = {};
   this.shakeFields = {};
+
   const selectedOption = this.stitchingDropdownOptions.find(opt => opt.Stitching_Details_Id === this.selectedStitchingId);
+
+  // Stitched material selection
   if (!this.selectedStitchingId) {
     this.validationErrors['Stitching_Details_Id'] = 'Please select stitched material.';
     this.shakeFields['Stitching_Details_Id'] = true;
   }
 
+  // Dispatch date validation
   if (!this.newDispatch.Dispatch_Date) {
     this.validationErrors['Dispatch_Date'] = 'Dispatch date is required.';
     this.shakeFields['Dispatch_Date'] = true;
+  } else {
+    const selectedDate = new Date(this.newDispatch.Dispatch_Date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const minDate = new Date();
+    minDate.setDate(today.getDate() - 14);  // 2 weeks ago
+    minDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      this.validationErrors['Dispatch_Date'] = 'Dispatch date cannot be in the future.';
+      this.shakeFields['Dispatch_Date'] = true;
+    } else if (selectedDate < minDate) {
+      this.validationErrors['Dispatch_Date'] = 'Dispatch date cannot be older than 2 weeks.';
+      this.shakeFields['Dispatch_Date'] = true;
+    }
   }
 
+  // Quantity validation
   if (this.newDispatch.Quantity_Dispatched == null || this.newDispatch.Quantity_Dispatched <= 0) {
-  this.validationErrors['Quantity_Dispatched'] = 'Quantity must be greater than zero.';
-  this.shakeFields['Quantity_Dispatched'] = true;
-} else if (selectedOption && this.newDispatch.Quantity_Dispatched > selectedOption.Quantity_Stitched) {
-  this.validationErrors['Quantity_Dispatched'] = 'Quantity cannot exceed available stock.';
-  this.shakeFields['Quantity_Dispatched'] = true;
-} else {
-  // Clear error if valid
-  delete this.validationErrors['Quantity_Dispatched'];
-  this.shakeFields['Quantity_Dispatched'] = false;
-}
+    this.validationErrors['Quantity_Dispatched'] = 'Quantity must be greater than zero.';
+    this.shakeFields['Quantity_Dispatched'] = true;
+  } else if (selectedOption && this.newDispatch.Quantity_Dispatched > selectedOption.Quantity_Stitched) {
+    this.validationErrors['Quantity_Dispatched'] = 'Quantity cannot exceed available stock.';
+    this.shakeFields['Quantity_Dispatched'] = true;
+  }
 
+  // Price validation
   if (!this.newDispatch.Price || this.newDispatch.Price <= 0) {
     this.validationErrors['Price'] = 'Enter a valid price.';
     this.shakeFields['Price'] = true;
   }
 
+  // Receiver name validation
   if (!this.newDispatch.Receiver_Name?.trim()) {
     this.validationErrors['Receiver_Name'] = 'Receiver name is required.';
     this.shakeFields['Receiver_Name'] = true;
   }
 
+  // Dispatch status validation
   if (this.newDispatch.Dispatch_Status === null || this.newDispatch.Dispatch_Status === undefined) {
     this.validationErrors['Dispatch_Status'] = 'Please select status.';
     this.shakeFields['Dispatch_Status'] = true;
@@ -115,6 +135,7 @@ validateDispatchForm(): boolean {
 
   return Object.keys(this.validationErrors).length === 0;
 }
+
 
 setError(field: string, message: string): void {
   this.validationErrors[field] = message;
