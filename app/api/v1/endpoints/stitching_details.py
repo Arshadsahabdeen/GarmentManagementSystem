@@ -39,7 +39,31 @@ def create_stitching_detail(stitching: StitchingDetailsCreate, db: Session = Dep
 
     db.commit()
     db.refresh(new_detail)
-    return new_detail
+
+    # Query enriched stitched data for response
+    enriched = (
+        db.query(
+            Stitching_Details.Stitching_Details_Id,
+            Stitching_Details.Material_Process_Id,
+            Material_Master.Material_Desc,
+            Stitching_Details.Size,
+            Stitching_Details.Stitching_Date,
+            Stitching_Details.Stitching_Status,
+            Stitching_Details.Quantity_Stitched,
+            Stitching_Details.Tailor_Id,
+            Stitching_Details.Quality_Check_Status,
+            Stitching_Details.Entry_Date,
+            Stitching_Details.Modified_Date
+        )
+        .join(Material_Process, Stitching_Details.Material_Process_Id == Material_Process.Material_Process_Id)
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .filter(Stitching_Details.Stitching_Details_Id == new_detail.Stitching_Details_Id)
+        .first()
+    )
+
+    return enriched._asdict()
+
+
 
 # Get all stitching details
 @router.get("/", response_model=list[StitchingDetailsOut])
