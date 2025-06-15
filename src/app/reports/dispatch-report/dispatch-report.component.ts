@@ -171,7 +171,7 @@ export class DispatchReportComponent implements OnInit {
   });
 
   // Totals
-  const totalQty = reportData.reduce((sum, m) => sum + Number(m.Quantity || 0), 0);
+  const totalQty = reportData.reduce((sum, m) => sum + Number(m.Quantity_Dispatched || 0), 0);
   const totalPrice = reportData.reduce((sum, m) => sum + Number(m.Price || 0), 0);
   const totalCount = reportData.length;
 
