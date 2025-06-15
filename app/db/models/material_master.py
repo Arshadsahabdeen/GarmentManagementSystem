@@ -4,7 +4,7 @@ from app.database import Base
 from sqlalchemy.orm import relationship
 
 class Material_Master(Base):
-    __tablename__ = "material_master"  # lowercase table name
+    __tablename__ = "material_master"
 
     Material_Id = Column(Integer, primary_key=True, index=True)
     Material_Desc = Column(String(255), nullable=False)

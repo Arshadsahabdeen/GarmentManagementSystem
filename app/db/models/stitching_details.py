@@ -2,8 +2,6 @@ from sqlalchemy import Column, Integer, ForeignKey, Float, Boolean, Date, TIMEST
 from sqlalchemy.sql import func
 from app.database import Base
 from sqlalchemy.orm import relationship
-from app.db.models.material_master import Material_Master
-
 
 class Stitching_Details(Base):
     __tablename__ = "stitching_details"
@@ -19,5 +17,5 @@ class Stitching_Details(Base):
     Entry_Date = Column(TIMESTAMP, server_default=func.current_timestamp())
     Modified_Date = Column(TIMESTAMP, server_default=func.current_timestamp(), onupdate=func.current_timestamp())
     Material_Id = Column(Integer, ForeignKey("material_master.Material_Id"), nullable=True)
-    material = relationship(Material_Master)
 
+    material = relationship("Material_Master", back_populates="stitchings")
