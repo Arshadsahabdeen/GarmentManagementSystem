@@ -122,9 +122,9 @@ export class MaterialMasterComponent implements OnInit {
   private resetForm() {
     this.newMaterial = {
       Material_Desc: '',
-      Quantity: 0,
+      Quantity: undefined,
       Color: '',
-      Price: 0,
+      Price: undefined,
       Pattern: '',
       Purchase_Date: '',
       Comments: ''

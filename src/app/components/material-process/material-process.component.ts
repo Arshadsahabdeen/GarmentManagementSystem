@@ -145,7 +145,7 @@ export class MaterialProcessComponent implements OnInit {
   resetForm() {
     this.newMaterialProcess = {
       Material_Id: 0,
-      Quantity_Processed: 0,
+      Quantity_Processed: undefined,
       Processed_Date: ''
     };
     this.clearValidationErrors();

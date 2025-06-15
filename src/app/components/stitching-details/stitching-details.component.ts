@@ -212,10 +212,10 @@ updateDetail() {
   resetForm() {
     this.newDetails = {
       Material_Process_Id: null,
-      Size: 0,
+      Size: undefined,
       Stitching_Date: '',
       Stitching_Status: false,
-      Quantity_Stitched: 0,
+      Quantity_Stitched: undefined,
       Tailor_Id: null,
       Quality_Check_Status: false
     };

@@ -14,7 +14,16 @@ import { Tailor } from '../../models/tailor.model';
 })
 export class TailorComponent implements OnInit {
   tailorList: Tailor[] = [];
-  newTailor: Tailor = this.getEmptyTailor();
+  // newTailor: Tailor = this.getEmptyTailor();
+  newTailor: any = {
+    Tailor_Name: '',
+      Age: undefined,
+      Gender: '',
+      Contact: '',
+      Experience: undefined,
+      Address: '',
+      Date_of_Joining: ''
+  };
   editMode = false;
   editingId: number | null = null;
   validationErrors: { [key: string]: string } = {};
@@ -26,17 +35,17 @@ export class TailorComponent implements OnInit {
     this.fetchTailors();
   }
 
-  getEmptyTailor(): Tailor {
-    return {
-      Tailor_Name: '',
-      Age: 0,
-      Gender: '',
-      Contact: '',
-      Experience: 0,
-      Address: '',
-      Date_of_Joining: ''
-    };
-  }
+  // getEmptyTailor(): Tailor {
+  //   return {
+  //     Tailor_Name: '',
+  //     Age: undefined,
+  //     Gender: '',
+  //     Contact: '',
+  //     Experience: undefined,
+  //     Address: '',
+  //     Date_of_Joining: ''
+  //   };
+  // }
 
   fetchTailors() {
     this.tailorService.getAllTailors().subscribe(data => {
@@ -168,7 +177,15 @@ export class TailorComponent implements OnInit {
   }
 
   resetForm() {
-    this.newTailor = this.getEmptyTailor();
+    // this.newTailor = this.getEmptyTailor();
+    this.newTailor = {
+      Age: undefined,
+      Gender: '',
+      Contact: '',
+      Experience: undefined,
+      Address: '',
+      Date_of_Joining: ''
+    };
     this.validationErrors = {};
     this.shakeFields = {};
     this.editMode = false;
