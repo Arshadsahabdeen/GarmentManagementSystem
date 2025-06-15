@@ -149,6 +149,10 @@ setError(field: string, message: string) {
   this.clearValidationErrors();
   if (!this.validateStitchingForm()) return;
 
+  // Ensure numeric types for IDs
+  this.newDetails.Tailor_Id = +this.newDetails.Tailor_Id;
+  this.newDetails.Material_Process_Id = +this.newDetails.Material_Process_Id;
+
   this.sdService.create(this.newDetails).subscribe({
     next: () => {
       this.resetForm();
@@ -157,6 +161,7 @@ setError(field: string, message: string) {
     error: (err) => console.error('Failed to add stitching detail:', err)
   });
 }
+
 
 updateDetail() {
   if (!this.selectedId) return;

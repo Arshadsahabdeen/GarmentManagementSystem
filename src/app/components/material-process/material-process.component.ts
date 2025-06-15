@@ -89,9 +89,11 @@ export class MaterialProcessComponent implements OnInit {
   let hasError = false;
 
   if (!this.newMaterialProcess.Material_Id) {
-    this.setValidationError('Material_Id', 'Material is required');
-    hasError = true;
-  }
+  this.setValidationError('Material_Id', 'Material is required');
+  hasError = true;
+} else {
+  this.newMaterialProcess.Material_Id = parseInt(this.newMaterialProcess.Material_Id as any, 10);
+}
 
   if (!this.newMaterialProcess.Processed_Date) {
     this.setValidationError('Processed_Date', 'Processed Date is required');

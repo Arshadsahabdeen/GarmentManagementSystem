@@ -34,7 +34,7 @@ export class MaterialProcessService {
     'https://garmentmanagementsystem-backend.onrender.com/material-process/dropdown-options'
   );
   }
-
+  
   create(mp: MaterialProcess): Observable<MaterialProcess> {
     return this.http.post<MaterialProcess>(this.baseUrl + '/', mp);
   }

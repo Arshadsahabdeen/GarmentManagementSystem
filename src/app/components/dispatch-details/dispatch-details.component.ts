@@ -124,20 +124,38 @@ setError(field: string, message: string): void {
 
 
   addDispatch(): void {
-  this.newDispatch.Stitching_Details_Id = this.selectedStitchingId;
+  if (this.selectedStitchingId == null) {
+    alert('Please select a Stitching Detail before dispatching.');
+    return;
+  }
+
+  this.newDispatch.Stitching_Details_Id = +this.selectedStitchingId;
+
+  // Force boolean type for Dispatch_Status
+  this.newDispatch.Dispatch_Status = this.newDispatch.Dispatch_Status === 'true' || this.newDispatch.Dispatch_Status === true;
 
   if (!this.validateDispatchForm()) return;
 
   this.dispatchService.createDispatch(this.newDispatch).subscribe({
     next: () => {
       this.loadDispatches();
-      this.newDispatch = {};
+      this.newDispatch = {
+        Stitching_Details_Id: null,
+        Dispatch_Date: '',
+        Quantity_Dispatched: null,
+        Price: null,
+        Receiver_Name: '',
+        Dispatch_Status: false,
+        Remarks: ''
+      };
     },
     error: (err) => {
       console.error('Dispatch error:', err);
     }
   });
 }
+
+
 
 
 updateDispatch(): void {
