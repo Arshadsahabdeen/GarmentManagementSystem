@@ -127,11 +127,21 @@ triggerShake(field: string) {
   setTimeout(() => (this.shakeFields[field] = false), 500);
 }
 
-  addTailor() {
-  if (!this.validateForm()) return;
-  this.tailorService.addTailor(this.newTailor).subscribe(() => {
-    this.fetchTailors();
-    this.resetForm();
+addTailor() {
+  console.log("Add Tailor triggered", this.newTailor);
+  if (!this.validateForm()) {
+    console.log("Validation failed");
+    return;
+  }
+  this.tailorService.addTailor(this.newTailor).subscribe({
+    next: () => {
+      console.log("Tailor added successfully");
+      this.fetchTailors();
+      this.resetForm();
+    },
+    error: (err) => {
+      console.error("Error adding tailor", err);
+    }
   });
 }
 
