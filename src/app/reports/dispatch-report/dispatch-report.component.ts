@@ -318,6 +318,7 @@ export class DispatchReportComponent implements OnInit {
     </body>
   </html>
   `;
+  console.log('Report Data:', reportData);
 
   const printWindow = window.open('', '_blank', 'width=1000,height=800');
   if (printWindow) {
