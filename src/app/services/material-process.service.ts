@@ -17,7 +17,7 @@ export interface MaterialProcess {
   providedIn: 'root'
 })
 export class MaterialProcessService {
-  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/material-process'; // Adjust your backend URL
+  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/material-process/'; // Adjust your backend URL
 
   constructor(private http: HttpClient) {}
 
