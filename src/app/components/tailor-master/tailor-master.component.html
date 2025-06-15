@@ -13,6 +13,7 @@
           [(ngModel)]="newTailor.Tailor_Name"
           name="Tailor_Name"
           required
+          placeholder="Enter full name"
           [ngClass]="{ 'error-input': validationErrors['Tailor_Name'], 'shake': shakeFields['Tailor_Name'] }"
         />
         <div *ngIf="validationErrors['Tailor_Name']" class="error-text">
@@ -27,6 +28,7 @@
           [(ngModel)]="newTailor.Age"
           name="Age"
           min="18"
+          placeholder="Min 18"
           required
           [ngClass]="{ 'error-input': validationErrors['Age'], 'shake': shakeFields['Age'] }"
         />
@@ -36,9 +38,8 @@
       </div>
 
       <div class="form-group">
-        <label for="gender">Gender *</label>
+        <label>Gender *</label>
         <select
-          id="gender"
           [(ngModel)]="newTailor.Gender"
           name="Gender"
           required
@@ -62,6 +63,8 @@
           type="text"
           [(ngModel)]="newTailor.Contact"
           name="Contact"
+          maxlength="10"
+          placeholder="10-digit mobile number"
           required
           [ngClass]="{ 'error-input': validationErrors['Contact'], 'shake': shakeFields['Contact'] }"
         />
@@ -77,6 +80,7 @@
           [(ngModel)]="newTailor.Experience"
           name="Experience"
           readonly
+          placeholder="Auto-calculated"
         />
       </div>
 
@@ -86,6 +90,7 @@
           [(ngModel)]="newTailor.Address"
           name="Address"
           required
+          placeholder="Full address (min 10 characters)"
           [ngClass]="{ 'error-input': validationErrors['Address'], 'shake': shakeFields['Address'] }"
         ></textarea>
         <div *ngIf="validationErrors['Address']" class="error-text">

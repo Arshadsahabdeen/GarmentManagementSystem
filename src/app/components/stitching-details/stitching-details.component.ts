@@ -24,10 +24,10 @@ export class StitchingDetailsComponent implements OnInit {
 
   newDetails: any = {
     Material_Process_Id: '',
-    Size: 0,
+    Size: undefined,
     Stitching_Date: '',
     Stitching_Status: false,
-    Quantity_Stitched: 0,
+    Quantity_Stitched: undefined,
     Tailor_Id: null,
     Quality_Check_Status: false
   };
@@ -114,31 +114,47 @@ validateStitchingForm(): boolean {
   if (!d.Material_Process_Id) {
     this.setError('Material_Process_Id', 'Processed material is required.');
   }
-  if (!d.Size || d.Size <= 0) {
+
+  if (d.Size === undefined || d.Size === null || d.Size <= 0) {
     this.setError('Size', 'Valid size is required.');
+  } else if (d.Size > this.selectedMaterialQty) {
+    this.setError('Size', `Size cannot exceed available quantity (${this.selectedMaterialQty} m).`);
   }
-  if (d.Size > this.selectedMaterialQty) {
-  this.setError('Size', `Size cannot exceed available quantity (${this.selectedMaterialQty} m).`);
-}
 
   if (!d.Stitching_Date) {
     this.setError('Stitching_Date', 'Stitching date is required.');
+  } else {
+    const today = new Date();
+    const stitchingDate = new Date(d.Stitching_Date);
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(today.getDate() - 14);
+
+    if (stitchingDate > today) {
+      this.setError('Stitching_Date', 'Stitching date cannot be in the future.');
+    } else if (stitchingDate < twoWeeksAgo) {
+      this.setError('Stitching_Date', 'Stitching date cannot be older than 2 weeks.');
+    }
   }
+
   if (d.Stitching_Status === undefined || d.Stitching_Status === null) {
     this.setError('Stitching_Status', 'Status is required.');
   }
-  if (!d.Quantity_Stitched || d.Quantity_Stitched <= 0) {
+
+  if (d.Quantity_Stitched === undefined || d.Quantity_Stitched === null || d.Quantity_Stitched <= 0) {
     this.setError('Quantity_Stitched', 'Quantity is required.');
   }
+
   if (!d.Tailor_Id) {
     this.setError('Tailor_Id', 'Tailor is required.');
   }
+
   if (d.Quality_Check_Status === undefined || d.Quality_Check_Status === null) {
     this.setError('Quality_Check_Status', 'Quality check status is required.');
   }
 
   return Object.keys(this.validationErrors).length === 0;
 }
+
 setError(field: string, message: string) {
   this.validationErrors[field] = message;
   this.shakeFields[field] = true;

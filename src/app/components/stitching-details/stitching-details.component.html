@@ -30,15 +30,17 @@
     <div class="form-group">
   <label>Size (in m) *</label>
   <input
-  type="number"
-  [(ngModel)]="newDetails.Size"
-  name="Size"
-  min="1"
-  [max]="selectedMaterialQty"
-  (input)="onSizeInputChange()"
-  [ngClass]="{ 'error-input': validationErrors['Size'], 'shake': shakeFields['Size'] }"
-/>
-
+    type="number"
+    [(ngModel)]="newDetails.Size"
+    name="Size"
+    min="0"
+    [max]="selectedMaterialQty"
+    step="0.01"
+    placeholder="0"
+    (input)="onSizeInputChange()"
+    [ngClass]="{ 'error-input': validationErrors['Size'], 'shake': shakeFields['Size'] }"
+    class="form-control"
+  />
   <small class="text-muted" *ngIf="selectedMaterialQty > 0">
     Available Quantity: {{ selectedMaterialQty }} m
   </small>
@@ -46,6 +48,7 @@
     {{ validationErrors['Size'] }}
   </div>
 </div>
+
 
     <!-- Stitching Date -->
     <div class="form-group">
@@ -81,18 +84,20 @@
   <div class="form-row">
     <!-- Quantity Stitched -->
     <div class="form-group">
-      <label>Quantity Stitched *</label>
-      <input
-        type="number"
-        [(ngModel)]="newDetails.Quantity_Stitched"
-        name="Quantity_Stitched"
-        readonly
-        [ngClass]="{ 'error-input': validationErrors['Quantity_Stitched'], 'shake': shakeFields['Quantity_Stitched'] }"
-      />
-      <div *ngIf="validationErrors['Quantity_Stitched']" class="error-text">
-        {{ validationErrors['Quantity_Stitched'] }}
-      </div>
-    </div>
+  <label>Quantity Stitched *</label>
+  <input
+    type="number"
+    [(ngModel)]="newDetails.Quantity_Stitched"
+    name="Quantity_Stitched"
+    readonly
+    placeholder="0"
+    class="form-control"
+    [ngClass]="{ 'error-input': validationErrors['Quantity_Stitched'], 'shake': shakeFields['Quantity_Stitched'] }"
+  />
+  <div *ngIf="validationErrors['Quantity_Stitched']" class="error-text">
+    {{ validationErrors['Quantity_Stitched'] }}
+  </div>
+</div>
 
     <!-- Tailor -->
     <div class="form-group">
