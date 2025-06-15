@@ -84,23 +84,23 @@ validateDispatchForm(): boolean {
     this.validationErrors['Dispatch_Date'] = 'Dispatch date is required.';
     this.shakeFields['Dispatch_Date'] = true;
   } else {
-  const selectedDate = new Date(this.newDispatch.Dispatch_Date);
-  selectedDate.setHours(0, 0, 0, 0);  // Normalize time
-
   const today = new Date();
-  today.setHours(0, 0, 0, 0);  // Normalize time
+  const cleanToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  const minDate = new Date(today);
-  minDate.setDate(today.getDate() - 14);
+  const twoWeeksAgo = new Date(cleanToday);
+  twoWeeksAgo.setDate(cleanToday.getDate() - 14);
 
-    if (selectedDate > today) {
-      this.validationErrors['Dispatch_Date'] = 'Dispatch date cannot be in the future.';
-      this.shakeFields['Dispatch_Date'] = true;
-    } else if (selectedDate < minDate) {
-      this.validationErrors['Dispatch_Date'] = 'Dispatch date cannot be older than 2 weeks.';
-      this.shakeFields['Dispatch_Date'] = true;
-    }
+  // Parse date safely as local
+  const parts = this.newDispatch.Dispatch_Date.split('-').map((p: string) => +p);
+  const dispatchDate = new Date(parts[0], parts[1] - 1, parts[2]); // YYYY, MM (0-indexed), DD
+
+  if (dispatchDate > cleanToday) {
+    this.setError('Dispatch_Date', 'Dispatch date cannot be in the future.');
+  } else if (dispatchDate < twoWeeksAgo) {
+    this.setError('Dispatch_Date', 'Dispatch date cannot be older than 2 weeks.');
   }
+}
+
 
   // Quantity validation
   if (this.newDispatch.Quantity_Dispatched == null || this.newDispatch.Quantity_Dispatched <= 0) {
