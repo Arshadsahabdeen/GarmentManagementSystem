@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # Replace with your actual database connection string
 SQLALCHEMY_DATABASE_URL = (
-    "mysql+pymysql://uf8nqwceg7hen4ls:fABMZigVfzcUCaXG758Z@bh9pddrgykbwbuzywtdb-mysql.services.clever-cloud.com:3306/bh9pddrgykbwbuzywtdb"
+    "mysql+pymysql://root:nKRFIUfjfvBjcNcsAZGOPgwNzozUOLml@nozomi.proxy.rlwy.net:42054/railway"
 )
 
 # Create engine
