@@ -21,41 +21,52 @@ def get_db():
 
 @router.post("/", response_model=DispatchOut, status_code=status.HTTP_201_CREATED)
 def create_dispatch(dispatch: DispatchCreate, db: Session = Depends(get_db)):
-    # Check if the Stitching Details ID exists
-    stitching = db.query(Stitching_Details).filter(Stitching_Details.Stitching_Details_Id == dispatch.Stitching_Details_Id).first()
-    
+    # Verify stitching details exists
+    stitching = db.query(Stitching_Details).filter(
+        Stitching_Details.Stitching_Details_Id == dispatch.Stitching_Details_Id
+    ).first()
+
     if not stitching:
         raise HTTPException(status_code=404, detail="Stitching Details ID does not exist.")
 
-    # Check if there is enough quantity stitched
+    # Check stitched quantity
     if dispatch.Quantity_Dispatched > stitching.Quantity_Stitched:
         raise HTTPException(status_code=400, detail="Not enough stitched quantity available for dispatch.")
 
-    # Proceed with dispatch creation
-    new_dispatch = Dispatch(**dispatch.model_dump())
-    
-    # Deduct the dispatched quantity
+    # Deduct dispatched quantity
     stitching.Quantity_Stitched -= Decimal(dispatch.Quantity_Dispatched)
+    db.add(stitching)
 
-    # Add notification: Shirts dispatched
-    # dispatch_message = f"{dispatch.Quantity_Dispatched} shirts dispatched to {dispatch.Receiver_Name}."
-    # notification = Notification(message=dispatch_message)
-    # db.add(notification)
-
-    # Optional: Add stock low alert
-    # This assumes stitching.Material_Id exists and maps to some Material_Stock model
-    # Uncomment this block if you want to implement stock alerts
-    # stock = db.query(Material_Stock).filter(Material_Stock.Material_Id == stitching.Material_Id).first()
-    # if stock and stock.Quantity < 10:
-    #     low_stock_msg = f"Low stock alert: Material ID {stock.Material_Id} has only {stock.Quantity} units left."
-    #     low_stock_notification = Notification(message=low_stock_msg)
-    #     db.add(low_stock_notification)
-
+    # Create new dispatch
+    new_dispatch = Dispatch(**dispatch.model_dump())
     db.add(new_dispatch)
     db.commit()
     db.refresh(new_dispatch)
 
-    return new_dispatch
+    # Build enriched response
+    enriched = (
+        db.query(
+            Dispatch.Dispatch_Id,
+            Dispatch.Stitching_Details_Id,
+            Material_Master.Material_Desc,
+            Dispatch.Quantity_Dispatched,
+            Dispatch.Dispatch_Date,
+            Dispatch.Price,
+            Dispatch.Receiver_Name,
+            Dispatch.Remarks,
+            Dispatch.Dispatch_Status,
+            Dispatch.Entry_Date,
+            Dispatch.Modified_Date
+        )
+        .join(Stitching_Details, Dispatch.Stitching_Details_Id == Stitching_Details.Stitching_Details_Id)
+        .join(Material_Process, Stitching_Details.Material_Process_Id == Material_Process.Material_Process_Id)
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .filter(Dispatch.Dispatch_Id == new_dispatch.Dispatch_Id)
+        .first()
+    )
+
+    return enriched._asdict()
+
 
 
 
