@@ -84,13 +84,14 @@ validateDispatchForm(): boolean {
     this.validationErrors['Dispatch_Date'] = 'Dispatch date is required.';
     this.shakeFields['Dispatch_Date'] = true;
   } else {
-    const selectedDate = new Date(this.newDispatch.Dispatch_Date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const selectedDate = new Date(this.newDispatch.Dispatch_Date);
+  selectedDate.setHours(0, 0, 0, 0);  // Normalize time
 
-    const minDate = new Date();
-    minDate.setDate(today.getDate() - 14);  // 2 weeks ago
-    minDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);  // Normalize time
+
+  const minDate = new Date(today);
+  minDate.setDate(today.getDate() - 14);
 
     if (selectedDate > today) {
       this.validationErrors['Dispatch_Date'] = 'Dispatch date cannot be in the future.';
