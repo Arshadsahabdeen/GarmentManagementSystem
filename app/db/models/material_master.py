@@ -17,4 +17,4 @@ class Material_Master(Base):
     Entry_Date = Column(TIMESTAMP, server_default=func.current_timestamp())
     Modified_Date = Column(TIMESTAMP, server_default=func.current_timestamp(), onupdate=func.current_timestamp())
 
-    stitchings = relationship("stitching_details", back_populates="material")
+    stitchings = relationship("Stitching_Details", back_populates="material")
