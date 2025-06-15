@@ -24,7 +24,7 @@ export class MaterialProcessComponent implements OnInit {
 
   newMaterialProcess: any = {
     Material_Id: '',
-    Quantity_Processed: 0,
+    Quantity_Processed: undefined,
     Processed_Date: ''
   };
 
@@ -89,15 +89,28 @@ export class MaterialProcessComponent implements OnInit {
   let hasError = false;
 
   if (!this.newMaterialProcess.Material_Id) {
-  this.setValidationError('Material_Id', 'Material is required');
-  hasError = true;
-} else {
-  this.newMaterialProcess.Material_Id = parseInt(this.newMaterialProcess.Material_Id as any, 10);
-}
+    this.setValidationError('Material_Id', 'Material is required');
+    hasError = true;
+  } else {
+    this.newMaterialProcess.Material_Id = parseInt(this.newMaterialProcess.Material_Id as any, 10);
+  }
 
   if (!this.newMaterialProcess.Processed_Date) {
     this.setValidationError('Processed_Date', 'Processed Date is required');
     hasError = true;
+  } else {
+    const today = new Date();
+    const processedDate = new Date(this.newMaterialProcess.Processed_Date);
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(today.getDate() - 14);
+
+    if (processedDate > today) {
+      this.setValidationError('Processed_Date', 'Processed date cannot be in the future');
+      hasError = true;
+    } else if (processedDate < twoWeeksAgo) {
+      this.setValidationError('Processed_Date', 'Processed date cannot be older than 2 weeks');
+      hasError = true;
+    }
   }
 
   const availableQty = this.getAvailableQuantity();
@@ -127,6 +140,7 @@ export class MaterialProcessComponent implements OnInit {
     }
   });
 }
+
 
   resetForm() {
     this.newMaterialProcess = {
