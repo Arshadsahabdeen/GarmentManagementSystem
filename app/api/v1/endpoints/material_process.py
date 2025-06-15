@@ -18,25 +18,38 @@ def get_db():
 
 @router.post("/", response_model=MaterialProcessOut, status_code=status.HTTP_201_CREATED)
 def create_material_process(mp: MaterialProcessCreate, db: Session = Depends(get_db)):
-    # Check material existence
     material = db.query(Material_Master).filter(Material_Master.Material_Id == mp.Material_Id).first()
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
-
-    # Ensure enough quantity is available
+    
     if material.Quantity is None or material.Quantity < mp.Quantity_Processed:
         raise HTTPException(status_code=400, detail="Insufficient material quantity")
-
-    # Deduct the quantity
+    
     material.Quantity -= mp.Quantity_Processed
 
-    # Create new Material_Process entry
     new_mp = Material_Process(**mp.dict())
     db.add(new_mp)
     db.commit()
     db.refresh(new_mp)
 
-    return new_mp
+    # 💥 Now fetch enriched result
+    enriched = (
+        db.query(
+            Material_Process.Material_Process_Id,
+            Material_Process.Material_Id,
+            Material_Process.Quantity_Processed,
+            Material_Process.Processed_Date,
+            Material_Process.Entry_Date,
+            Material_Process.Modified_Date,
+            Material_Master.Material_Desc,
+            Material_Master.Color
+        )
+        .join(Material_Master, Material_Process.Material_Id == Material_Master.Material_Id)
+        .filter(Material_Process.Material_Process_Id == new_mp.Material_Process_Id)
+        .first()
+    )
+
+    return enriched._asdict()  # convert SQLAlchemy row to dict for FastAPI
 
 @router.get("/", response_model=List[MaterialProcessOut])
 def read_material_processes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
