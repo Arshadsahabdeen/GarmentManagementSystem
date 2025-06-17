@@ -24,6 +24,10 @@ export class TailorReportComponent implements OnInit {
   tailorSortDirection: 'asc' | 'desc' = 'asc';
   filterTailorFromDate = '';
   filterTailorToDate = '';
+  filterName: string = '';
+  filterContact: string = '';
+  filterGender: string = '';
+
 
   @ViewChild('donutChartTailor') donutChartTailorRef!: ElementRef<HTMLCanvasElement>;
   donutChartTailor: Chart | undefined;
@@ -94,6 +98,41 @@ loadTailorData() {
       return 0;
     });
   }
+
+  applyTailorFilters() {
+  this.filteredTailorData = this.tailorData.filter(t => {
+    const matchesName = this.filterName
+      ? t.Tailor_Name.toLowerCase().includes(this.filterName.toLowerCase())
+      : true;
+
+    const matchesContact = this.filterContact
+      ? t.Contact.includes(this.filterContact)
+      : true;
+
+    const matchesGender = this.filterGender
+      ? t.Gender === this.filterGender
+      : true;
+
+    return matchesName && matchesContact && matchesGender;
+  });
+
+  this.applyTailorSorting();
+  this.updateTailorPagination();
+  this.renderTailorDonutChart();
+}
+resetTailorFilters() {
+  this.filterName = '';
+  this.filterContact = '';
+  this.filterGender = '';
+  this.filterTailorFromDate = '';
+  this.filterTailorToDate = '';
+
+  this.filteredTailorData = [...this.tailorData];
+  this.applyTailorSorting();
+  this.updateTailorPagination();
+  this.renderTailorDonutChart();
+}
+
 
   updateTailorPagination() {
     this.totalTailorPages = Math.ceil(this.filteredTailorData.length / this.tailorPageSize);

@@ -11,6 +11,27 @@
       To:
       <input type="date" [(ngModel)]="filterTailorToDate" (change)="filterTailorByDate()" />
     </label>
+    <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+  <select [(ngModel)]="filterName" (change)="applyTailorFilters()">
+    <option value="" disabled selected hidden>Select Name</option>
+    <option *ngFor="let t of tailorData" [value]="t.Tailor_Name">{{ t.Tailor_Name }}</option>
+  </select>
+
+  <select [(ngModel)]="filterContact" (change)="applyTailorFilters()">
+    <option value="" disabled selected hidden>Select Contact No</option>
+    <option *ngFor="let t of tailorData" [value]="t.Contact">{{ t.Contact }}</option>
+  </select>
+
+  <select [(ngModel)]="filterGender" (change)="applyTailorFilters()">
+    <option value="" disabled selected hidden>Select Gender</option>
+    <option *ngFor="let gender of ['Male', 'Female', 'Other']" [value]="gender">{{ gender }}</option>
+  </select>
+
+  <button (click)="resetTailorFilters()" style="padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 4px;">
+    Clear Filters
+  </button>
+</div>
+
   </div>
 
   <!-- Tailor data table -->
