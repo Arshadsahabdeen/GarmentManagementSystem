@@ -11,6 +11,7 @@
       To:
       <input type="date" [(ngModel)]="filterStitchingToDate" (change)="filterStitchingByDate()" />
     </label>
+    <label for="materialFilter">Filter by Material:</label>
     <select [(ngModel)]="selectedMaterial" (change)="applyFilters()">
   <option value="" disabled selected hidden>Select Material</option>
   <option *ngFor="let mat of availableMaterials" [value]="mat">{{ mat }}</option>

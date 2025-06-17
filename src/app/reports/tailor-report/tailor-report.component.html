@@ -2,18 +2,28 @@
   <h2>Tailor Master Report</h2>
 
   <!-- Date range filters -->
-  <div 
-  class="filter-container"
-  style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-bottom: 15px;"
+  <div
+  class="date-filter"
+  style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; align-items: center; margin-bottom: 15px;"
 >
-  <label style="display: flex; flex-direction: column; align-items: center;">
+  <label>
     From:
-    <input type="date" [(ngModel)]="filterTailorFromDate" (change)="filterTailorByDate()" />
+    <input
+      type="date"
+      [(ngModel)]="filterTailorFromDate"
+      (change)="filterTailorByDate()"
+      style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+    />
   </label>
 
-  <label style="display: flex; flex-direction: column; align-items: center;">
+  <label>
     To:
-    <input type="date" [(ngModel)]="filterTailorToDate" (change)="filterTailorByDate()" />
+    <input
+      type="date"
+      [(ngModel)]="filterTailorToDate"
+      (change)="filterTailorByDate()"
+      style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+    />
   </label>
 
   <input
@@ -21,7 +31,7 @@
     [(ngModel)]="filterName"
     (input)="applyTailorFilters()"
     placeholder="Search Name"
-    style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+    style="padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 150px;"
   />
 
   <input
@@ -29,7 +39,7 @@
     [(ngModel)]="filterContact"
     (input)="applyTailorFilters()"
     placeholder="Search Contact No"
-    style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;"
+    style="padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 150px;"
   />
 
   <select
@@ -39,7 +49,9 @@
   >
     <option value="" disabled selected hidden>Select Gender</option>
     <option value="">All</option>
-    <option *ngFor="let gender of ['Male', 'Female', 'Other']" [value]="gender">{{ gender }}</option>
+    <option *ngFor="let gender of ['Male', 'Female', 'Other']" [value]="gender">
+      {{ gender }}
+    </option>
   </select>
 
   <button
