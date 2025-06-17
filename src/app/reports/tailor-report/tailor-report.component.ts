@@ -101,37 +101,26 @@ loadTailorData() {
 
   applyTailorFilters() {
   this.filteredTailorData = this.tailorData.filter(t => {
-    const matchesName = this.filterName
-      ? t.Tailor_Name.toLowerCase().includes(this.filterName.toLowerCase())
-      : true;
+    const nameMatch = !this.filterName || t.Tailor_Name.toLowerCase().includes(this.filterName.toLowerCase());
+    const contactMatch = !this.filterContact || t.Contact.toLowerCase().includes(this.filterContact.toLowerCase());
+    const genderMatch = !this.filterGender || t.Gender === this.filterGender;
 
-    const matchesContact = this.filterContact
-      ? t.Contact.includes(this.filterContact)
-      : true;
-
-    const matchesGender = this.filterGender
-      ? t.Gender === this.filterGender
-      : true;
-
-    return matchesName && matchesContact && matchesGender;
+    return nameMatch && contactMatch && genderMatch;
   });
 
   this.applyTailorSorting();
   this.updateTailorPagination();
-  this.renderTailorDonutChart();
 }
+
 resetTailorFilters() {
   this.filterName = '';
   this.filterContact = '';
   this.filterGender = '';
-  this.filterTailorFromDate = '';
-  this.filterTailorToDate = '';
-
   this.filteredTailorData = [...this.tailorData];
   this.applyTailorSorting();
   this.updateTailorPagination();
-  this.renderTailorDonutChart();
 }
+
 
 
   updateTailorPagination() {
