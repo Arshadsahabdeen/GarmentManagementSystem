@@ -17,25 +17,18 @@ export interface StitchedByMaterial {
   providedIn: 'root',
 })
 export class ReportService {
-  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/report'; // Adjust backend URL as needed
-
+  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/report';
   constructor(private http: HttpClient) {}
-
-  // ✅ Updated to return a single summary object
   getPriceAndProfitSummary(fromDate?: string, toDate?: string): Observable<MaterialPriceSummary> {
     let params = new HttpParams();
     if (fromDate) params = params.set('from_date', fromDate);
     if (toDate) params = params.set('to_date', toDate);
-
     return this.http.get<MaterialPriceSummary>(`${this.baseUrl}/price-profit-summary`, { params });
   }
-
-  // ✅ No changes needed here
   getQuantityStitchedByMaterial(): Observable<StitchedByMaterial[]> {
     return this.http.get<StitchedByMaterial[]>(`${this.baseUrl}/stitched-by-material`);
   }
   getPriceProfitOverTime(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/price-profit-over-time`);
   }
-
 }

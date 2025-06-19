@@ -10,14 +10,29 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './material-master.component.html',
-  styleUrls: ['./material-master.component.css']
+  styleUrls: ['./material-master.component.css'],
 })
 export class MaterialMasterComponent implements OnInit {
   materials: Material[] = [];
 
-  materialNames: string[] = ['Cotton', 'Linen', 'Polyester', 'Denim', 'Lycra', 'Satin', 'Flannel', 'Lyocell'];
+  materialNames: string[] = [
+    'Cotton',
+    'Linen',
+    'Polyester',
+    'Denim',
+    'Lycra',
+    'Satin',
+    'Flannel',
+    'Lyocell',
+  ];
   colorOptions: string[] = ['Red', 'Blue', 'Green', 'Black', 'White'];
-  patternOptions: string[] = ['Solid', 'Striped', 'Checked', 'Floral', 'Geometric'];
+  patternOptions: string[] = [
+    'Solid',
+    'Striped',
+    'Checked',
+    'Floral',
+    'Geometric',
+  ];
 
   newMaterial: Partial<Material> = {
     Material_Desc: '',
@@ -26,14 +41,17 @@ export class MaterialMasterComponent implements OnInit {
     Price: undefined,
     Pattern: '',
     Purchase_Date: '',
-    Comments: ''
+    Comments: '',
   };
 
   errors: { [key: string]: string } = {};
   editMode = false;
   selectedMaterialId: number | null = null;
 
-  constructor(private materialService: MaterialService, private router: Router) {}
+  constructor(
+    private materialService: MaterialService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadMaterials();
@@ -41,58 +59,59 @@ export class MaterialMasterComponent implements OnInit {
 
   loadMaterials() {
     this.materialService.getMaterials().subscribe({
-      next: (res) => this.materials = res,
-      error: (err) => console.error('Failed to load materials', err)
+      next: (res) => (this.materials = res),
+      error: (err) => console.error('Failed to load materials', err),
     });
   }
 
   addMaterial() {
-  this.errors = {};
+    this.errors = {};
 
-  if (!this.newMaterial['Material_Desc']) {
-    this.errors['Material_Desc'] = 'Material description is required';
-  }
-  if (!this.newMaterial['Quantity'] || this.newMaterial['Quantity']! <= 0) {
-    this.errors['Quantity'] = 'Quantity must be greater than 0';
-  }
-  if (!this.newMaterial['Color']) {
-    this.errors['Color'] = 'Color is required';
-  }
-  if (!this.newMaterial['Price'] || this.newMaterial['Price']! <= 0) {
-    this.errors['Price'] = 'Price must be greater than 0';
-  }
-  if (!this.newMaterial['Pattern']) {
-    this.errors['Pattern'] = 'Pattern is required';
-  }
-  if (!this.newMaterial['Purchase_Date']) {
-    this.errors['Purchase_Date'] = 'Purchase date is required';
-  } else {
-    const purchaseDate = new Date(this.newMaterial['Purchase_Date']);
-    const today = new Date();
-    const twoWeeksAgo = new Date();
-    twoWeeksAgo.setDate(today.getDate() - 14);
-
-    if (isNaN(purchaseDate.getTime())) {
-      this.errors['Purchase_Date'] = 'Invalid purchase date.';
-    } else if (purchaseDate > today) {
-      this.errors['Purchase_Date'] = 'Purchase date cannot be in the future.';
-    } else if (purchaseDate < twoWeeksAgo) {
-      this.errors['Purchase_Date'] = 'Purchase date cannot be more than 2 weeks old.';
+    if (!this.newMaterial['Material_Desc']) {
+      this.errors['Material_Desc'] = 'Material description is required';
     }
+    if (!this.newMaterial['Quantity'] || this.newMaterial['Quantity']! <= 0) {
+      this.errors['Quantity'] = 'Quantity must be greater than 0';
+    }
+    if (!this.newMaterial['Color']) {
+      this.errors['Color'] = 'Color is required';
+    }
+    if (!this.newMaterial['Price'] || this.newMaterial['Price']! <= 0) {
+      this.errors['Price'] = 'Price must be greater than 0';
+    }
+    if (!this.newMaterial['Pattern']) {
+      this.errors['Pattern'] = 'Pattern is required';
+    }
+    if (!this.newMaterial['Purchase_Date']) {
+      this.errors['Purchase_Date'] = 'Purchase date is required';
+    } else {
+      const purchaseDate = new Date(this.newMaterial['Purchase_Date']);
+      const today = new Date();
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(today.getDate() - 14);
+
+      if (isNaN(purchaseDate.getTime())) {
+        this.errors['Purchase_Date'] = 'Invalid purchase date.';
+      } else if (purchaseDate > today) {
+        this.errors['Purchase_Date'] = 'Purchase date cannot be in the future.';
+      } else if (purchaseDate < twoWeeksAgo) {
+        this.errors['Purchase_Date'] =
+          'Purchase date cannot be more than 2 weeks old.';
+      }
+    }
+
+    if (Object.keys(this.errors).length > 0) return;
+
+    this.materialService
+      .createMaterial(this.newMaterial as Material)
+      .subscribe({
+        next: () => {
+          this.resetForm();
+          this.loadMaterials();
+        },
+        error: (err) => console.error('Failed to add material', err),
+      });
   }
-
-  if (Object.keys(this.errors).length > 0) return;
-
-  this.materialService.createMaterial(this.newMaterial as Material).subscribe({
-    next: () => {
-      this.resetForm();
-      this.loadMaterials();
-    },
-    error: (err) => console.error('Failed to add material', err)
-  });
-}
-
-
 
   editMaterial(material: Material) {
     this.editMode = true;
@@ -104,13 +123,15 @@ export class MaterialMasterComponent implements OnInit {
   updateMaterial() {
     if (this.selectedMaterialId === null) return;
 
-    this.materialService.updateMaterial(this.selectedMaterialId, this.newMaterial as Material).subscribe({
-      next: () => {
-        this.cancelEdit();
-        this.loadMaterials();
-      },
-      error: (err) => console.error('Failed to update material', err)
-    });
+    this.materialService
+      .updateMaterial(this.selectedMaterialId, this.newMaterial as Material)
+      .subscribe({
+        next: () => {
+          this.cancelEdit();
+          this.loadMaterials();
+        },
+        error: (err) => console.error('Failed to update material', err),
+      });
   }
 
   cancelEdit() {
@@ -127,13 +148,14 @@ export class MaterialMasterComponent implements OnInit {
       Price: undefined,
       Pattern: '',
       Purchase_Date: '',
-      Comments: ''
+      Comments: '',
     };
     this.errors = {};
   }
 
   printTable(): void {
-    const printContents = document.getElementById('materialPrintArea')?.innerHTML;
+    const printContents =
+      document.getElementById('materialPrintArea')?.innerHTML;
     if (!printContents) return;
 
     const printWindow = window.open('', '', 'width=1000,height=800');

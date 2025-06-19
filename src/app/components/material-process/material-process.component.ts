@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './material-process.component.html',
-  styleUrls: ['./material-process.component.css']
+  styleUrls: ['./material-process.component.css'],
 })
 export class MaterialProcessComponent implements OnInit {
   materialProcesses: MaterialProcess[] = [];
@@ -20,12 +20,17 @@ export class MaterialProcessComponent implements OnInit {
   validationErrors: { [key: string]: string } = {};
   shakeFields: { [key: string]: boolean } = {};
 
-  materialOptions: { Material_Id: number; description: string; color: string; qty: number }[] = [];
+  materialOptions: {
+    Material_Id: number;
+    description: string;
+    color: string;
+    qty: number;
+  }[] = [];
 
   newMaterialProcess: any = {
     Material_Id: '',
     Quantity_Processed: undefined,
-    Processed_Date: ''
+    Processed_Date: '',
   };
 
   editMode = false;
@@ -43,16 +48,15 @@ export class MaterialProcessComponent implements OnInit {
   }
 
   loadMaterialProcesses() {
-  this.materialProcessService.getAll().subscribe({
-    next: (res) => {
-      this.materialProcesses = res;
-    },
-    error: (err) => {
-      console.error('Failed to load material processes', err);
-    }
-  });
-}
-    
+    this.materialProcessService.getAll().subscribe({
+      next: (res) => {
+        this.materialProcesses = res;
+      },
+      error: (err) => {
+        console.error('Failed to load material processes', err);
+      },
+    });
+  }
 
   loadMaterialOptions() {
     this.materialService.getMaterialDropdownOptions().subscribe({
@@ -61,17 +65,16 @@ export class MaterialProcessComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load material options', err);
-      }
+      },
     });
   }
 
   getAvailableQuantity(): number {
-  const selectedMaterial = this.materialOptions.find(
-    (mat) => mat.Material_Id === +this.newMaterialProcess.Material_Id
-  );
-  return selectedMaterial ? selectedMaterial.qty : 0;
-}
-
+    const selectedMaterial = this.materialOptions.find(
+      (mat) => mat.Material_Id === +this.newMaterialProcess.Material_Id
+    );
+    return selectedMaterial ? selectedMaterial.qty : 0;
+  }
 
   setValidationError(field: string, message: string) {
     this.validationErrors[field] = message;
@@ -85,68 +88,84 @@ export class MaterialProcessComponent implements OnInit {
   }
 
   addMaterialProcess() {
-  this.clearValidationErrors();
-  let hasError = false;
+    this.clearValidationErrors();
+    let hasError = false;
 
-  if (!this.newMaterialProcess.Material_Id) {
-    this.setValidationError('Material_Id', 'Material is required');
-    hasError = true;
-  } else {
-    this.newMaterialProcess.Material_Id = parseInt(this.newMaterialProcess.Material_Id as any, 10);
-  }
-
-  if (!this.newMaterialProcess.Processed_Date) {
-    this.setValidationError('Processed_Date', 'Processed Date is required');
-    hasError = true;
-  } else {
-    const today = new Date();
-    const processedDate = new Date(this.newMaterialProcess.Processed_Date);
-    const twoWeeksAgo = new Date();
-    twoWeeksAgo.setDate(today.getDate() - 14);
-
-    if (processedDate > today) {
-      this.setValidationError('Processed_Date', 'Processed date cannot be in the future');
+    if (!this.newMaterialProcess.Material_Id) {
+      this.setValidationError('Material_Id', 'Material is required');
       hasError = true;
-    } else if (processedDate < twoWeeksAgo) {
-      this.setValidationError('Processed_Date', 'Processed date cannot be older than 2 weeks');
+    } else {
+      this.newMaterialProcess.Material_Id = parseInt(
+        this.newMaterialProcess.Material_Id as any,
+        10
+      );
+    }
+
+    if (!this.newMaterialProcess.Processed_Date) {
+      this.setValidationError('Processed_Date', 'Processed Date is required');
+      hasError = true;
+    } else {
+      const today = new Date();
+      const processedDate = new Date(this.newMaterialProcess.Processed_Date);
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(today.getDate() - 14);
+
+      if (processedDate > today) {
+        this.setValidationError(
+          'Processed_Date',
+          'Processed date cannot be in the future'
+        );
+        hasError = true;
+      } else if (processedDate < twoWeeksAgo) {
+        this.setValidationError(
+          'Processed_Date',
+          'Processed date cannot be older than 2 weeks'
+        );
+        hasError = true;
+      }
+    }
+
+    const availableQty = this.getAvailableQuantity();
+    const qty = this.newMaterialProcess.Quantity_Processed;
+
+    if (!qty || qty <= 0) {
+      this.setValidationError(
+        'Quantity_Processed',
+        'Quantity must be greater than zero'
+      );
+      hasError = true;
+    } else if (qty > availableQty) {
+      this.setValidationError(
+        'Quantity_Processed',
+        `Quantity cannot exceed available (${availableQty})`
+      );
       hasError = true;
     }
+
+    if (hasError) return;
+
+    this.materialProcessService
+      .create(this.newMaterialProcess as MaterialProcess)
+      .subscribe({
+        next: () => {
+          this.resetForm();
+          this.loadMaterialProcesses();
+        },
+        error: (err) => {
+          console.error('Error response:', err);
+          alert(
+            'Failed to add material process: ' +
+              (err?.error?.detail || 'Unknown error')
+          );
+        },
+      });
   }
-
-  const availableQty = this.getAvailableQuantity();
-  const qty = this.newMaterialProcess.Quantity_Processed;
-
-  if (!qty || qty <= 0) {
-    this.setValidationError('Quantity_Processed', 'Quantity must be greater than zero');
-    hasError = true;
-  } else if (qty > availableQty) {
-    this.setValidationError(
-      'Quantity_Processed',
-      `Quantity cannot exceed available (${availableQty})`
-    );
-    hasError = true;
-  }
-
-  if (hasError) return;
-
-  this.materialProcessService.create(this.newMaterialProcess as MaterialProcess).subscribe({
-    next: () => {
-      this.resetForm();
-      this.loadMaterialProcesses();
-    },
-    error: (err) => {
-      console.error('Error response:', err);
-      alert('Failed to add material process: ' + (err?.error?.detail || 'Unknown error'));
-    }
-  });
-}
-
 
   resetForm() {
     this.newMaterialProcess = {
       Material_Id: 0,
       Quantity_Processed: undefined,
-      Processed_Date: ''
+      Processed_Date: '',
     };
     this.clearValidationErrors();
     this.editMode = false;
@@ -161,49 +180,57 @@ export class MaterialProcessComponent implements OnInit {
   }
 
   updateMaterialProcess() {
-  if (this.selectedProcessId === null) return;
+    if (this.selectedProcessId === null) return;
 
-  this.clearValidationErrors();
-  let hasError = false;
+    this.clearValidationErrors();
+    let hasError = false;
 
-  const availableQty = this.getAvailableQuantity();
-  const qty = this.newMaterialProcess.Quantity_Processed;
+    const availableQty = this.getAvailableQuantity();
+    const qty = this.newMaterialProcess.Quantity_Processed;
 
-  if (!qty || qty <= 0) {
-    this.setValidationError('Quantity_Processed', 'Quantity must be greater than zero');
-    hasError = true;
-  } else if (qty > availableQty) {
-    this.setValidationError(
-      'Quantity_Processed',
-      `Quantity cannot exceed available (${availableQty})`
-    );
-    hasError = true;
-  }
-
-  if (!this.newMaterialProcess.Material_Id) {
-    this.setValidationError('Material_Id', 'Material is required');
-    hasError = true;
-  }
-
-  if (!this.newMaterialProcess.Processed_Date) {
-    this.setValidationError('Processed_Date', 'Processed Date is required');
-    hasError = true;
-  }
-
-  if (hasError) return;
-
-  this.materialProcessService.update(this.selectedProcessId, this.newMaterialProcess as MaterialProcess).subscribe({
-    next: () => {
-      this.cancelEdit();
-      this.loadMaterialProcesses();
-    },
-    error: (err) => {
-      console.error('Failed to update material process', err);
+    if (!qty || qty <= 0) {
+      this.setValidationError(
+        'Quantity_Processed',
+        'Quantity must be greater than zero'
+      );
+      hasError = true;
+    } else if (qty > availableQty) {
+      this.setValidationError(
+        'Quantity_Processed',
+        `Quantity cannot exceed available (${availableQty})`
+      );
+      hasError = true;
     }
-  });
-}
 
-cancelEdit() {
+    if (!this.newMaterialProcess.Material_Id) {
+      this.setValidationError('Material_Id', 'Material is required');
+      hasError = true;
+    }
+
+    if (!this.newMaterialProcess.Processed_Date) {
+      this.setValidationError('Processed_Date', 'Processed Date is required');
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    this.materialProcessService
+      .update(
+        this.selectedProcessId,
+        this.newMaterialProcess as MaterialProcess
+      )
+      .subscribe({
+        next: () => {
+          this.cancelEdit();
+          this.loadMaterialProcesses();
+        },
+        error: (err) => {
+          console.error('Failed to update material process', err);
+        },
+      });
+  }
+
+  cancelEdit() {
     this.editMode = false;
     this.selectedProcessId = null;
     this.resetForm();
@@ -213,7 +240,9 @@ cancelEdit() {
   }
 
   printTable(): void {
-    const printContents = document.getElementById('materialProcessPrintArea')?.innerHTML;
+    const printContents = document.getElementById(
+      'materialProcessPrintArea'
+    )?.innerHTML;
     if (!printContents) return;
     const printWindow = window.open('', '', 'width=1000,height=800');
     if (printWindow) {

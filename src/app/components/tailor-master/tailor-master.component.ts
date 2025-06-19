@@ -10,19 +10,19 @@ import { Tailor } from '../../models/tailor.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tailor-master.component.html',
-  styleUrls: ['./tailor-master.component.css']
+  styleUrls: ['./tailor-master.component.css'],
 })
 export class TailorComponent implements OnInit {
   tailorList: Tailor[] = [];
   // newTailor: Tailor = this.getEmptyTailor();
   newTailor: any = {
     Tailor_Name: '',
-      Age: undefined,
-      Gender: '',
-      Contact: '',
-      Experience: undefined,
-      Address: '',
-      Date_of_Joining: ''
+    Age: undefined,
+    Gender: '',
+    Contact: '',
+    Experience: undefined,
+    Address: '',
+    Date_of_Joining: '',
   };
   editMode = false;
   editingId: number | null = null;
@@ -34,25 +34,11 @@ export class TailorComponent implements OnInit {
   ngOnInit(): void {
     this.fetchTailors();
   }
-
-  // getEmptyTailor(): Tailor {
-  //   return {
-  //     Tailor_Name: '',
-  //     Age: undefined,
-  //     Gender: '',
-  //     Contact: '',
-  //     Experience: undefined,
-  //     Address: '',
-  //     Date_of_Joining: ''
-  //   };
-  // }
-
   fetchTailors() {
-    this.tailorService.getAllTailors().subscribe(data => {
+    this.tailorService.getAllTailors().subscribe((data) => {
       this.tailorList = data;
     });
   }
-
   onDateChange(): void {
     const joiningDate = new Date(this.newTailor.Date_of_Joining);
     const today = new Date();
@@ -82,7 +68,8 @@ export class TailorComponent implements OnInit {
       this.triggerShake('Tailor_Name');
       isValid = false;
     } else if (!/^[a-zA-Z ]{2,}$/.test(this.newTailor.Tailor_Name)) {
-      this.validationErrors['Tailor_Name'] = 'Enter a valid name (letters and spaces only).';
+      this.validationErrors['Tailor_Name'] =
+        'Enter a valid name (letters and spaces only).';
       this.triggerShake('Tailor_Name');
       isValid = false;
     }
@@ -104,16 +91,23 @@ export class TailorComponent implements OnInit {
       this.triggerShake('Contact');
       isValid = false;
     } else if (!/^[6-9]\d{9}$/.test(this.newTailor.Contact)) {
-      this.validationErrors['Contact'] = 'Enter a valid 10-digit contact number.';
+      this.validationErrors['Contact'] =
+        'Enter a valid 10-digit contact number.';
       this.triggerShake('Contact');
       isValid = false;
     }
 
-    if (!this.newTailor.Address.trim() || this.newTailor.Address.trim().length < 10) {
-      this.validationErrors['Address'] = 'Address must be at least 10 characters.';
+    if (
+      !this.newTailor.Address.trim() ||
+      this.newTailor.Address.trim().length < 10
+    ) {
+      this.validationErrors['Address'] =
+        'Address must be at least 10 characters.';
       this.triggerShake('Address');
       isValid = false;
-    } else if (!/^[a-zA-Z0-9\s,.\-#]{10,250}$/.test(this.newTailor.Address.trim())) {
+    } else if (
+      !/^[a-zA-Z0-9\s,.\-#]{10,250}$/.test(this.newTailor.Address.trim())
+    ) {
       this.validationErrors['Address'] = 'Address contains invalid characters.';
       this.triggerShake('Address');
       isValid = false;
@@ -141,22 +135,22 @@ export class TailorComponent implements OnInit {
 
   addTailor() {
     this.onDateChange(); // ensure experience is up-to-date before validation
-    console.log("Add Tailor triggered", this.newTailor);
+    console.log('Add Tailor triggered', this.newTailor);
 
     if (!this.validateForm()) {
-      console.log("Validation failed");
+      console.log('Validation failed');
       return;
     }
 
     this.tailorService.addTailor(this.newTailor).subscribe({
       next: () => {
-        console.log("Tailor added successfully");
+        console.log('Tailor added successfully');
         this.fetchTailors();
         this.resetForm();
       },
       error: (err) => {
-        console.error("Error adding tailor", err);
-      }
+        console.error('Error adding tailor', err);
+      },
     });
   }
 
@@ -166,13 +160,13 @@ export class TailorComponent implements OnInit {
 
     this.tailorService.updateTailor(this.editingId, this.newTailor).subscribe({
       next: () => {
-        console.log("Tailor updated successfully");
+        console.log('Tailor updated successfully');
         this.fetchTailors();
         this.cancelEdit();
       },
       error: (err) => {
-        console.error("Error updating tailor", err);
-      }
+        console.error('Error updating tailor', err);
+      },
     });
   }
 
@@ -184,7 +178,7 @@ export class TailorComponent implements OnInit {
       Contact: '',
       Experience: undefined,
       Address: '',
-      Date_of_Joining: ''
+      Date_of_Joining: '',
     };
     this.validationErrors = {};
     this.shakeFields = {};

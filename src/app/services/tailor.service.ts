@@ -24,8 +24,4 @@ export class TailorService {
   updateTailor(id: number, tailor: Tailor): Observable<Tailor> {
     return this.http.put<Tailor>(`${this.baseUrl}/${id}`, tailor);
   }
-
-  deleteTailor(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
-  }
 }

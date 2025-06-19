@@ -19,38 +19,28 @@ export interface Material {
   providedIn: 'root',
 })
 export class MaterialService {
-  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/material_master'; // Change to your backend URL
+  private baseUrl = 'https://garmentmanagementsystem-backend.onrender.com/material_master'; 
 
   constructor(private http: HttpClient) {}
 
   getMaterials(): Observable<Material[]> {
     return this.http.get<Material[]>(this.baseUrl);
   }
-
   getMaterialNames(): Observable<string[]> {
   return this.http.get<string[]>('https://garmentmanagementsystem-backend.onrender.com/material-names');
-}
-
+  }
   getMaterial(id: number): Observable<Material> {
     return this.http.get<Material>(`${this.baseUrl}/${id}`);
   }
-
- getMaterialDropdownOptions() {
+  getMaterialDropdownOptions() {
   return this.http.get<{ Material_Id: number; description: string; color: string; qty: number }[]>(
     'https://garmentmanagementsystem-backend.onrender.com/material_master/dropdown-options'
-  );
-}
-
-
+    );
+  }
   createMaterial(material: Material): Observable<Material> {
     return this.http.post<Material>(this.baseUrl, material);
   }
-
   updateMaterial(id: number, material: Material): Observable<Material> {
     return this.http.put<Material>(`${this.baseUrl}/${id}`, material);
-  }
-
-  deleteMaterial(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

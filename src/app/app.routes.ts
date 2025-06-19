@@ -35,9 +35,9 @@ export const routes: Routes = [
 
   {
   path: 'reports',
-  component: GeneralReportComponent, // This includes the header/sidebar and <router-outlet>
+  component: GeneralReportComponent, 
   children: [
-    { path: '', redirectTo: 'material', pathMatch: 'full' }, // Or whatever default
+    { path: '', redirectTo: 'material', pathMatch: 'full' },
     { path: 'material', component: MaterialReportComponent },
     { path: 'process', component: ProcessReportComponent },
     { path: 'stitching', component: StitchingReportComponent },

@@ -11,10 +11,9 @@ Chart.register(...registerables);
   templateUrl: './dispatch-report.component.html',
   standalone: true,
   styleUrls: ['./dispatch-report.component.css'],
-  imports: [FormsModule , ReactiveFormsModule , CommonModule]
+  imports: [FormsModule, ReactiveFormsModule, CommonModule],
 })
 export class DispatchReportComponent implements OnInit {
-
   dispatchData: any[] = [];
   filteredDispatchData: any[] = [];
   pagedDispatchData: any[] = [];
@@ -25,26 +24,30 @@ export class DispatchReportComponent implements OnInit {
   dispatchPageSize: number = 10;
   currentDispatchPage: number = 1;
   totalDispatchPages: number = 1;
+  filterReceiverName: string = '';
+  filterDispatchStatus: string = '';
 
-  @ViewChild('donutChartDispatch') donutChartDispatchRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('donutChartDispatch')
+  donutChartDispatchRef!: ElementRef<HTMLCanvasElement>;
   donutChartDispatch: Chart | undefined;
 
   constructor(private dispatchService: DispatchService) {}
 
   ngOnInit() {
     this.loadDispatchData();
-    
-  window.addEventListener('generate-dispatch-report', (e: any) => {
-    const { fromDate, toDate, sortOrder, status } = e.detail;
-    this.generateReport(fromDate, toDate, sortOrder, status);
-  });
+
+    window.addEventListener('generate-dispatch-report', (e: any) => {
+      const { fromDate, toDate, sortOrder, status } = e.detail;
+      this.generateReport(fromDate, toDate, sortOrder, status);
+    });
   }
 
   loadDispatchData() {
-    this.dispatchService.getAllDispatches().subscribe(data => {
+    this.dispatchService.getAllDispatches().subscribe((data) => {
       this.dispatchData = data;
       this.filteredDispatchData = [...data];
       this.applyDispatchSorting();
+      this.applyDispatchFilters();
       this.updateDispatchPagination();
       this.renderDispatchDonutChart();
     });
@@ -52,12 +55,33 @@ export class DispatchReportComponent implements OnInit {
 
   filterDispatchByDate() {
     this.currentDispatchPage = 1;
-    const fromDate = this.filterDispatchFromDate ? new Date(this.filterDispatchFromDate) : new Date('1970-01-01');
-    const toDate = this.filterDispatchToDate ? new Date(this.filterDispatchToDate) : new Date();
+    const fromDate = this.filterDispatchFromDate
+      ? new Date(this.filterDispatchFromDate)
+      : new Date('1970-01-01');
+    const toDate = this.filterDispatchToDate
+      ? new Date(this.filterDispatchToDate)
+      : new Date();
 
-    this.filteredDispatchData = this.dispatchData.filter(d => {
+    this.filteredDispatchData = this.dispatchData.filter((d) => {
       const dispatchDate = new Date(d.Dispatch_Date);
       return dispatchDate >= fromDate && dispatchDate <= toDate;
+    });
+
+    this.applyDispatchSorting();
+    this.updateDispatchPagination();
+  }
+  applyDispatchFilters() {
+    this.filteredDispatchData = this.dispatchData.filter((d) => {
+      const nameMatch =
+        !this.filterReceiverName ||
+        d.Receiver_Name.toLowerCase().includes(
+          this.filterReceiverName.toLowerCase()
+        );
+      const statusMatch =
+        !this.filterDispatchStatus ||
+        d.Dispatch_Status === this.filterDispatchStatus;
+
+      return nameMatch && statusMatch;
     });
 
     this.applyDispatchSorting();
@@ -66,7 +90,8 @@ export class DispatchReportComponent implements OnInit {
 
   sortDispatchTable(column: string) {
     if (this.dispatchSortColumn === column) {
-      this.dispatchSortDirection = this.dispatchSortDirection === 'asc' ? 'desc' : 'asc';
+      this.dispatchSortDirection =
+        this.dispatchSortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.dispatchSortColumn = column;
       this.dispatchSortDirection = 'asc';
@@ -80,12 +105,23 @@ export class DispatchReportComponent implements OnInit {
       let valA = a[this.dispatchSortColumn];
       let valB = b[this.dispatchSortColumn];
 
-      if (['Dispatch_Id', 'Quantity_Dispatched', 'Price', 'Stitching_Details_Id'].includes(this.dispatchSortColumn)) {
+      if (
+        [
+          'Dispatch_Id',
+          'Quantity_Dispatched',
+          'Price',
+          'Stitching_Details_Id',
+        ].includes(this.dispatchSortColumn)
+      ) {
         valA = Number(valA);
         valB = Number(valB);
       }
 
-      if (['Dispatch_Date', 'Entry_Date', 'Modified_Date'].includes(this.dispatchSortColumn)) {
+      if (
+        ['Dispatch_Date', 'Entry_Date', 'Modified_Date'].includes(
+          this.dispatchSortColumn
+        )
+      ) {
         valA = new Date(valA).getTime();
         valB = new Date(valB).getTime();
       }
@@ -97,11 +133,17 @@ export class DispatchReportComponent implements OnInit {
   }
 
   updateDispatchPagination() {
-    this.totalDispatchPages = Math.ceil(this.filteredDispatchData.length / this.dispatchPageSize);
-    if (this.currentDispatchPage > this.totalDispatchPages) this.currentDispatchPage = this.totalDispatchPages || 1;
+    this.totalDispatchPages = Math.ceil(
+      this.filteredDispatchData.length / this.dispatchPageSize
+    );
+    if (this.currentDispatchPage > this.totalDispatchPages)
+      this.currentDispatchPage = this.totalDispatchPages || 1;
 
     const start = (this.currentDispatchPage - 1) * this.dispatchPageSize;
-    this.pagedDispatchData = this.filteredDispatchData.slice(start, start + this.dispatchPageSize);
+    this.pagedDispatchData = this.filteredDispatchData.slice(
+      start,
+      start + this.dispatchPageSize
+    );
   }
 
   goToDispatchPage(page: number) {
@@ -109,19 +151,26 @@ export class DispatchReportComponent implements OnInit {
     this.currentDispatchPage = page;
     this.updateDispatchPagination();
   }
+  resetDispatchFilters() {
+    this.filterReceiverName = '';
+    this.filterDispatchStatus = '';
+    this.filteredDispatchData = [...this.dispatchData];
+    this.applyDispatchSorting();
+    this.updateDispatchPagination();
+  }
 
   renderDispatchDonutChart() {
     if (this.donutChartDispatch) this.donutChartDispatch.destroy();
 
     const quantityMap = new Map<string, number>();
-    this.filteredDispatchData.forEach(dispatch => {
+    this.filteredDispatchData.forEach((dispatch) => {
       const material = dispatch.Material_Desc;
       const qty = dispatch.Quantity_Dispatched;
       quantityMap.set(material, (quantityMap.get(material) ?? 0) + qty);
     });
 
     const labels = Array.from(quantityMap.keys());
-    const quantities = labels.map(label => quantityMap.get(label) ?? 0);
+    const quantities = labels.map((label) => quantityMap.get(label) ?? 0);
 
     const ctx = this.donutChartDispatchRef?.nativeElement.getContext('2d');
     if (!ctx) return;
@@ -130,68 +179,94 @@ export class DispatchReportComponent implements OnInit {
       type: 'doughnut',
       data: {
         labels,
-        datasets: [{
-          data: quantities,
-          backgroundColor: [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-          ],
-        }]
+        datasets: [
+          {
+            data: quantities,
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF',
+              '#FF9F40',
+            ],
+          },
+        ],
       },
       options: {
         responsive: true,
         plugins: {
           legend: { position: 'right' },
-          title: { display: true, text: 'Quantity Dispatched by Material' }
-        }
-      }
+          title: { display: true, text: 'Quantity Dispatched by Material' },
+        },
+      },
     });
   }
- generateReport(
-  fromDate?: string,
-  toDate?: string,
-  sortOrder: 'asc' | 'desc' = 'asc',
-  status: string = ''
-): void {
-  const start = fromDate ? new Date(fromDate) : new Date('1970-01-01');
-  const end = toDate ? new Date(toDate) : new Date();
+  generateReport(
+    fromDate?: string,
+    toDate?: string,
+    sortOrder: 'asc' | 'desc' = 'asc',
+    status: string = ''
+  ): void {
+    const start = fromDate ? new Date(fromDate) : new Date('1970-01-01');
+    const end = toDate ? new Date(toDate) : new Date();
 
-  // Filter
-  let reportData = this.dispatchData.filter(d => {
-    const date = new Date(d.Dispatch_Date);
-    const matchDate = date >= start && date <= end;
-    const matchStatus = status === '' ? true : String(d.Dispatch_Status) === status;
-    return matchDate && matchStatus;
-  });
+    // Filter
+    let reportData = this.dispatchData.filter((d) => {
+      const date = new Date(d.Dispatch_Date);
+      const matchDate = date >= start && date <= end;
+      const matchStatus =
+        status === '' ? true : String(d.Dispatch_Status) === status;
+      return matchDate && matchStatus;
+    });
 
-  // Sort
-  reportData = reportData.sort((a, b) => {
-    const valA = new Date(a.Dispatch_Date).getTime();
-    const valB = new Date(b.Dispatch_Date).getTime();
-    return sortOrder === 'asc' ? valA - valB : valB - valA;
-  });
+    // Sort
+    reportData = reportData.sort((a, b) => {
+      const valA = new Date(a.Dispatch_Date).getTime();
+      const valB = new Date(b.Dispatch_Date).getTime();
+      return sortOrder === 'asc' ? valA - valB : valB - valA;
+    });
 
-  // Totals
-  const totalQty = reportData.reduce((sum, m) => sum + Number(m.Quantity_Dispatched || 0), 0);
-  const totalPrice = reportData.reduce((sum, m) => sum + Number(m.Price || 0), 0);
-  const totalCount = reportData.length;
+    // Totals
+    const totalQty = reportData.reduce(
+      (sum, m) => sum + Number(m.Quantity_Dispatched || 0),
+      0
+    );
+    const totalPrice = reportData.reduce(
+      (sum, m) => sum + Number(m.Price || 0),
+      0
+    );
+    const totalCount = reportData.length;
 
-  // Chart Data
-  const quantityMap = new Map<string, number>();
-  reportData.forEach(dispatch => {
-    const material = dispatch.Material_Desc;
-    quantityMap.set(material, (quantityMap.get(material) ?? 0) + dispatch.Quantity_Dispatched);
-  });
+    // Chart Data
+    const quantityMap = new Map<string, number>();
+    reportData.forEach((dispatch) => {
+      const material = dispatch.Material_Desc;
+      quantityMap.set(
+        material,
+        (quantityMap.get(material) ?? 0) + dispatch.Quantity_Dispatched
+      );
+    });
 
-  const chartData = {
-    labels: Array.from(quantityMap.keys()),
-    datasets: [{
-      data: Array.from(quantityMap.values()),
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
-    }]
-  };
+    const chartData = {
+      labels: Array.from(quantityMap.keys()),
+      datasets: [
+        {
+          data: Array.from(quantityMap.values()),
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF',
+            '#FF9F40',
+          ],
+        },
+      ],
+    };
 
-  // HTML Report
-  const printContents = `
+    // HTML Report
+    const printContents = `
   <html>
     <head>
       <title>Dispatch Report</title>
@@ -258,7 +333,9 @@ export class DispatchReportComponent implements OnInit {
         <div class="summary">
   <p><strong>System:</strong> Garments Management System</p>
   <p><strong>Generated On:</strong> ${new Date().toLocaleString()}</p>
-  <p><strong>From:</strong> ${fromDate || 'N/A'} <strong>To:</strong> ${toDate || 'N/A'}</p>
+  <p><strong>From:</strong> ${fromDate || 'N/A'} <strong>To:</strong> ${
+      toDate || 'N/A'
+    }</p>
   <p><strong>Total Dispatches:</strong> ${totalCount}</p>
   <p><strong>Total Quantity:</strong> ${totalQty}</p>
   <p><strong>Total Price:</strong> ₹${totalPrice.toFixed(2)}</p>
@@ -278,7 +355,9 @@ export class DispatchReportComponent implements OnInit {
             </tr>
           </thead>
           <tbody>
-            ${reportData.map(d => `
+            ${reportData
+              .map(
+                (d) => `
               <tr>
                 <td>${d.Dispatch_Id}</td>
                 <td>${d.Stitching_Details_Id}</td>
@@ -289,7 +368,9 @@ export class DispatchReportComponent implements OnInit {
                 <td>${d.Dispatch_Status ? 'Dispatched' : 'Pending'}</td>
                 <td>${d.Dispatch_Date}</td>
               </tr>
-            `).join('')}
+            `
+              )
+              .join('')}
           </tbody>
         </table>
         <div class="chart-container">
@@ -318,13 +399,13 @@ export class DispatchReportComponent implements OnInit {
     </body>
   </html>
   `;
-  console.log('Report Data:', reportData);
+    console.log('Report Data:', reportData);
 
-  const printWindow = window.open('', '_blank', 'width=1000,height=800');
-  if (printWindow) {
-    printWindow.document.open();
-    printWindow.document.write(printContents);
-    printWindow.document.close();
+    const printWindow = window.open('', '_blank', 'width=1000,height=800');
+    if (printWindow) {
+      printWindow.document.open();
+      printWindow.document.write(printContents);
+      printWindow.document.close();
+    }
   }
-}
 }
