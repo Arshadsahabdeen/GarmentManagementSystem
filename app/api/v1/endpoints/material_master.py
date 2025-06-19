@@ -45,7 +45,6 @@ def check_material_exists(
 
 @router.post("/", response_model=MaterialOut, status_code=status.HTTP_201_CREATED, summary="Create a new material")
 def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
-    """Create a new material, ensuring unique name and color combination."""
     try:
         # Check for unique Material_Desc and Color combination
         existing_material = db.query(Material_Master).filter(
@@ -57,16 +56,10 @@ def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Material with this description and color already exists"
             )
-
         new_material = Material_Master(**material.dict())
         db.add(new_material)
         db.commit()
-        db.refresh(new_material)
-        
-        # Trigger notification if quantity is 0
-        # if new_material.Quantity == 0:
-        #     create_low_stock_notification(db, new_material.Material_Desc)
-            
+        db.refresh(new_material)            
         return new_material
     except SQLAlchemyError as e:
         db.rollback()
