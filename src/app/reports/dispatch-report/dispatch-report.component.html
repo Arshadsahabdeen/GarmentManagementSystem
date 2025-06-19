@@ -46,12 +46,8 @@
           Select Dispatch Status
         </option>
         <option value="">All</option>
-        <option
-          *ngFor="let status of ['Dispatched', 'Pending', 'Cancelled']"
-          [value]="status"
-        >
-          {{ status }}
-        </option>
+  <option value="true">Dispatched</option>
+  <option value="false">Pending</option>
       </select>
 
       <button

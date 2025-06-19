@@ -71,22 +71,20 @@ export class DispatchReportComponent implements OnInit {
     this.updateDispatchPagination();
   }
   applyDispatchFilters() {
-    this.filteredDispatchData = this.dispatchData.filter((d) => {
-      const nameMatch =
-        !this.filterReceiverName ||
-        d.Receiver_Name.toLowerCase().includes(
-          this.filterReceiverName.toLowerCase()
-        );
-      const statusMatch =
-        !this.filterDispatchStatus ||
-        d.Dispatch_Status === this.filterDispatchStatus;
+  this.filteredDispatchData = this.dispatchData.filter((d) => {
+    const receiverName = d.Receiver_Name ? d.Receiver_Name.toLowerCase() : '';
+    const status = d.Dispatch_Status ? String(d.Dispatch_Status) : '';
 
-      return nameMatch && statusMatch;
-    });
+    const nameMatch = !this.filterReceiverName || receiverName.includes(this.filterReceiverName.toLowerCase());
+    const statusMatch = !this.filterDispatchStatus || status === this.filterDispatchStatus;
 
-    this.applyDispatchSorting();
-    this.updateDispatchPagination();
-  }
+    return nameMatch && statusMatch;
+  });
+
+  this.applyDispatchSorting();
+  this.updateDispatchPagination();
+}
+
 
   sortDispatchTable(column: string) {
     if (this.dispatchSortColumn === column) {
