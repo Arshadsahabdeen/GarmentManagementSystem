@@ -1,40 +1,9 @@
-/* Global Styles */
-
-/* Reset margins and enable full height */
+/* You can add global styles to this file, and also import other style files */
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  overflow-x: hidden; /* Prevents horizontal scroll */
+  overflow: hidden; /* disables scrolling */
 }
 
-/* Optional: allow vertical scrolling if needed */
-body {
-  overflow-y: auto;
-}
-
-/* Images and media elements scale properly */
-img, video, canvas {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Utility class for responsive layout containers */
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-/* Mobile responsiveness for screens below 768px */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    padding: 10px;
-    align-items: stretch;
-  }
-}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
